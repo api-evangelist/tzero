@@ -1,0 +1,17 @@
+generated: '2026-09-01'
+method: searched
+source: https://apidocs.tzero.com/docs
+limit_count: 0
+note: >-
+  tZERO publishes no rate limits for either REST API. Neither OpenAPI declares a 429 response,
+  neither contract mentions rate limiting, and no RateLimit-*, X-RateLimit-* or Retry-After header
+  is documented. A live anonymous request to https://api.t0direct.com/api/v1/webhooks/events on
+  2026-09-01 returned 401 with no rate-limit headers in the response. An agent integrating with
+  tZERO has no published runtime signal to back off against; limits, if any, are set contractually.
+limits: []
+response_headers: []
+exhaustion_status: null
+evidence:
+- {url: 'https://apidocs.tzero.com/docs', status: 200, finding: 'overview documents auth and base URL only; no rate-limit section'}
+- {url: 'https://api.t0direct.com/api/v1/openapi.json', status: 200, finding: 'no 429 response and no rate-limit vocabulary anywhere in the document'}
+- {url: 'https://api.t0direct.com/api/v1/webhooks/events', status: 401, finding: 'no RateLimit-* / Retry-After headers on the live response'}

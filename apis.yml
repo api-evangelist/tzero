@@ -1,23 +1,177 @@
 aid: tzero
 name: tZERO
-description: 'tZERO is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'tZERO Technologies is a US financial-technology company building regulated infrastructure
+  for tokenized real-world assets and digital securities. Through its SEC- and FINRA-regulated broker-dealer,
+  Alternative Trading System (tZERO ATS, continuously operating since 2019), special purpose broker-dealer
+  for digital custody, and SEC-registered transfer agent, tZERO covers the full lifecycle: capital formation
+  and token issuance, secondary trading and market data, clearance and settlement, cap-table recordkeeping,
+  corporate actions, dividends and proxy voting. Its developer surface — marketed as tZERO Connect — publishes
+  two public OpenAPI 3.0.3 contracts (an Issuance & Secondary Markets REST API on gateway-web-api.tzero.com
+  and an Institutional transfer-agent / tokenization / custody API on api.t0direct.com) alongside FIX
+  4.2 / 4.4 specifications for order entry, drop copy and market data.'
 url: https://raw.githubusercontent.com/api-evangelist/tzero/refs/heads/main/apis.yml
+image: https://tzero.com/api/sanity-assets/images/jpd7ydtd/pre-prod/bcb9e8e2a5c5bf41d9938781a368d92635b0923a-595x156.svg?w=1200&h=627&fit=crop&auto=format
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-09-01'
 modified: '2026-09-01'
 tags:
 - Company
-apis: []
+- Digital Securities
+- Tokenization
+- Capital Markets
+- Trading
+- Alternative Trading System
+- Transfer Agent
+- Custody
+- Blockchain
+- Financial Services
+- Securities
+- Market Data
+- FIX Protocol
+apis:
+- aid: tzero:issuance-secondary-markets
+  name: tZERO Issuance & Secondary Markets API
+  description: REST/JSON API for creating individual broker-dealer accounts, triggering and reviewing
+    KYC on investors, browsing primary offerings and managing investments, linking bank accounts and moving
+    funds, reading balances, retrieving market schedules and public price history/snapshots, and placing,
+    listing and cancelling orders on the tZERO ATS. Authenticated with an x-apikey header plus a bearer
+    JWT obtained from POST /auth/v1/api/token.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Trading
+  - Onboarding
+  - KYC
+  - Investments
+  - Market Data
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-issuance-secondary-markets-openapi.json
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+- aid: tzero:institutional
+  name: tZERO Institutional API
+  description: 'REST/JSON API giving institutional issuers and partners programmatic access to tZERO transfer-agent,
+    tokenization and custody operations: investors and holdings, securities and cap tables, book-entry
+    transfers, issuance requests, documents, dividends, corporate actions, voting proposals, settlement
+    instructions, omnibus investor accounts, token deployments, custody vaults/whitelists, and HMAC-signed
+    webhooks. Authenticated with an X-API-Key header carrying scoped permissions.'
+  humanURL: https://apidocs.tzero.com/docs/institutional
+  baseURL: https://api.t0direct.com/api/v1
+  tags:
+  - Transfer Agent
+  - Tokenization
+  - Custody
+  - Corporate Actions
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-institutional-openapi.json
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:fix
+  name: tZERO FIX API
+  description: FIX 4.2 / 4.4 protocol surface for low-latency order entry, drop-copy execution reports,
+    market data (snapshot and incremental refresh, trading session status, security status) and Indication
+    of Interest (IOI) market data against the tZERO ATS. Message-by-message specifications are published
+    on the tZERO API docs site; session credentials and connectivity are arranged with tZERO.
+  humanURL: https://apidocs.tzero.com/docs/fix
+  tags:
+  - FIX Protocol
+  - Order Entry
+  - Market Data
+  - Drop Copy
+  properties:
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs/fix
+  x-transport: FIX 4.2 / 4.4 over TCP; session host, port, CompIDs and credentials are arranged with tZERO
+    and are not published
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/tzero-agentic-access.yml
+- type: DomainSecurity
+  url: security/tzero-domain-security.yml
+- type: Authentication
+  url: authentication/tzero-authentication.yml
 - type: Website
-  url: https://forgeglobal.com/tzero_stock/
+  url: https://www.tzero.com/
+- type: DeveloperPortal
+  url: https://apidocs.tzero.com/docs
+- type: Documentation
+  url: https://apidocs.tzero.com/docs
+- type: APIReference
+  url: https://apidocs.tzero.com/docs/explorer
+- type: GettingStarted
+  url: https://apidocs.tzero.com/docs
+- type: Support
+  url: https://www.tzero.com/contact
+- type: Blog
+  url: https://www.tzero.com/content-hub
+- type: GitHubOrganization
+  url: https://github.com/tZERO-dev
+- type: SignUp
+  url: https://platform.tzero.com/tzero/register
+- type: Login
+  url: https://platform.tzero.com/tzero/auth
+- type: TermsOfService
+  url: https://storage.googleapis.com/public-disclosures.tzero.com/tZERO_MasterTermsofUse.pdf
+- type: PrivacyPolicy
+  url: https://storage.googleapis.com/public-disclosures.tzero.com/Privacy-Policy-and-Privacy-Notices-(TDAS-and-tZERO-Securities).pdf
+- type: LegalHub
+  url: https://www.tzero.com/legal
+- type: Company
+  url: https://www.tzero.com/company
+- type: Careers
+  url: https://www.tzero.com/careers
+- type: LinkedIn
+  url: https://www.linkedin.com/company/tzero/
+- type: X
+  url: https://x.com/tZERO
+- type: Conventions
+  url: conventions/tzero-conventions.yml
+- type: Idempotency
+  url: conventions/tzero-conventions.yml
+- type: ErrorCatalog
+  url: errors/tzero-problem-types.yml
+- type: ErrorCodes
+  url: errors/tzero-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/tzero-lifecycle.yml
+- type: ChangeLog
+  url: changelog/tzero-changelog.yml
+- type: Conformance
+  url: conformance/tzero-conformance.yml
+- type: Compliance
+  url: https://www.tzero.com/legal
+- type: DataModel
+  url: data-model/tzero-data-model.yml
+- type: Webhooks
+  url: asyncapi/tzero-institutional-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/tzero-llms.txt
+- type: Packages
+  url: packages/tzero-packages.yml
+- type: Plans
+  url: plans/tzero-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/tzero-rate-limits.yml
+- type: Overlay
+  url: overlays/tzero-issuance-secondary-markets-overlay.yaml
+- type: Overlay
+  url: overlays/tzero-institutional-overlay.yaml
+x-enrichment:
+  date: '2026-09-01'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v1

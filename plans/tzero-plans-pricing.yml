@@ -1,0 +1,23 @@
+generated: '2026-09-01'
+method: searched
+source: https://www.tzero.com/connect
+plan_count: 0
+note: >-
+  tZERO publishes no developer plans, no API pricing page and no self-serve tier. tzero.com/pricing
+  returns 404, and tZERO Connect — the banner over the API suite — routes every integration
+  conversation to "Reach Out to Our Team" / https://www.tzero.com/contact. API keys are issued by
+  tZERO ("Contact us to get your API key"), which makes this an enterprise, contract-priced surface.
+  Trading-side commercial terms that ARE public sit at the market level rather than the API level:
+  tZERO has announced zero trading fees for registered digital securities on the ATS, and the
+  Issuance & Secondary Markets API exposes GET /trading/v1/fee so a caller can price an order's
+  fee at runtime rather than reading it from a rate card.
+plans: []
+evidence:
+- {url: 'https://tzero.com/pricing', status: 404}
+- {url: 'https://www.tzero.com/connect', status: 200, finding: 'API suite described; contact-sales only'}
+- {url: 'https://apidocs.tzero.com/docs', status: 200, finding: '"x-apikey — Contact us to get your API key"'}
+- {url: 'https://www.tzero.com/news/tzero-ats-introduces-zero-trading-fees-for-registered-digital-securities', status: 200, finding: 'zero trading fees announcement (market pricing, not API pricing)'}
+runtime_fee_endpoint:
+  operation: getOrderFee
+  path: GET /trading/v1/fee
+  source: openapi/tzero-issuance-secondary-markets-openapi.json

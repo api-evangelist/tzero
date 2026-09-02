@@ -1,0 +1,70 @@
+generated: '2026-09-01'
+method: probed
+source: live GET of the named /.well-known/ path list on every tZERO host in apis.yml + OpenAPI servers[]
+note: >-
+  Every named path was probed on every host and every one missed. developer.tzero.com
+  (the "tZERO API Portal", an Angular single-page app) answers HTTP 200 with the same
+  2,403-byte SPA shell for every /.well-known/* path INCLUDING the negative control
+  /.well-known/tzero-negative-control-7f3ab91c.json, which cannot exist — so its 200s
+  are a catch-all, not documents, and are recorded as misses. No WellKnown or SecurityTxt
+  pointer is emitted from this file: it documents an absence, not a presence.
+hit_count: 0
+soft_404_control:
+  host: developer.tzero.com
+  path: /.well-known/tzero-negative-control-7f3ab91c.json
+  status: 200
+  bytes: 2403
+  result: failed
+  effect: all 200s on developer.tzero.com discarded as catch-all responses
+hosts:
+- host: https://www.tzero.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://apidocs.tzero.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://gateway-web-api.tzero.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://api.t0direct.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://developer.tzero.com
+  note: SPA catch-all — every path returns the same 200 HTML shell; all treated as misses
+  documents:
+  - {path: /.well-known/security.txt, status: 200, catch_all: true}
+  - {path: /.well-known/openid-configuration, status: 200, catch_all: true}
+  - {path: /.well-known/oauth-authorization-server, status: 200, catch_all: true}
+  - {path: /.well-known/oauth-protected-resource, status: 200, catch_all: true}
+  - {path: /.well-known/api-catalog, status: 200, catch_all: true}
+  - {path: /.well-known/ai-plugin.json, status: 200, catch_all: true}
+  - {path: /.well-known/agent-card.json, status: 200, catch_all: true}
+  - {path: /.well-known/agent.json, status: 200, catch_all: true}

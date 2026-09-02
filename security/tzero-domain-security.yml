@@ -1,0 +1,51 @@
+generated: '2026-09-01'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.tzero.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov  2 07:28:10 2026 GMT
+  hsts: true
+  hsts_max_age: 63072000
+- host: apidocs.tzero.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov  9 04:36:49 2026 GMT
+  hsts: false
+- host: gateway-web-api.tzero.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  5 23:43:17 2026 GMT
+  hsts: null
+- host: api.t0direct.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 20 20:50:59 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+  hsts_include_subdomains: true
+  method: probed-by-hand
+- host: platform.tzero.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 30 00:25:27 2026 GMT
+  method: probed-by-hand
+domains:
+- domain: tzero.com
+  dnssec: true
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+- domain: t0direct.com
+  dnssec: false
+  caa: []
+  spf: false
+  dmarc: false
+  dmarc_policy: null
+  method: probed-by-hand
+note: The mechanical probe reads apis.yml Website/Portal/humanURL/baseURL and OpenAPI servers[]. api.t0direct.com
+  and platform.tzero.com were probed by hand on the same day with the same method and appended below; t0direct.com
+  is a second registrable domain tZERO operates for its institutional surface and it carries no DNSSEC, CAA, SPF
+  or DMARC record.

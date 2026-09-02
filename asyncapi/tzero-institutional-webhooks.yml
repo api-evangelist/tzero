@@ -1,0 +1,46 @@
+generated: '2026-09-01'
+method: searched
+source: https://api.t0direct.com/api/v1/openapi.json
+spec_type: Webhooks
+note: >-
+  tZERO publishes NO AsyncAPI document. The Institutional API does ship a real, self-service
+  webhook surface — subscription CRUD, HMAC-SHA256 signed payloads, a test-send endpoint and a
+  catalog endpoint — captured here. The catalog endpoint GET /api/v1/webhooks/events is annotated
+  "No authentication required" in the contract, but a live anonymous GET on 2026-09-01 returned
+  HTTP 401 {"code":"UNAUTHORIZED","message":"X-API-Key header is required"}, so the enumerated
+  event list could not be harvested and is NOT reproduced here. Only the event families tZERO
+  names in its own documentation are listed below.
+surface:
+  api: tZERO Institutional API
+  base_url: https://api.t0direct.com/api/v1
+  transport: HTTPS POST to a subscriber-supplied URL (must be HTTPS)
+  signing:
+    algorithm: HMAC-SHA256
+    secret: per-subscription; auto-generated if not supplied and returned ONCE on creation
+  auth_to_manage: 'X-API-Key header'
+operations:
+- {operation: 'GET /api/v1/webhooks/events', summary: List available webhook events, gated: true, observed_status: 401}
+- {operation: 'GET /api/v1/webhooks/', summary: List webhook subscriptions}
+- {operation: 'POST /api/v1/webhooks/', summary: Create webhook subscription, required: [url, events]}
+- {operation: 'PATCH /api/v1/webhooks/{id}', summary: Update webhook subscription}
+- {operation: 'DELETE /api/v1/webhooks/{id}', summary: Delete webhook subscription}
+- {operation: 'POST /api/v1/webhooks/{id}/test', summary: Send test webhook event}
+- {operation: 'GET /api/v1/custody-accounts/webhooks', summary: List custody-account webhooks}
+- {operation: 'POST /api/v1/custody-accounts/webhooks', summary: Create custody-account webhook}
+- {operation: 'DELETE /api/v1/custody-accounts/webhooks/{id}', summary: Delete custody-account webhook}
+- {operation: 'GET /api/v1/custody-accounts/events', summary: List custody-account events}
+- {operation: 'POST /api/v1/custody-accounts/events/{id}/replay', summary: Replay a custody-account event}
+event_families_note: named by tZERO in openapi/tzero-institutional-openapi.json#/info/description; individual event names are not enumerated in the published contract
+event_families:
+- prefix: ta.dividend.*
+  description: dividend declaration, review, funding and distribution lifecycle
+- prefix: ta.corporate_action.*
+  description: corporate-action declaration and execution lifecycle
+- prefix: ta.proposal.*
+  description: voting-proposal lifecycle, tallies and on-chain anchors
+- prefix: ta.test
+  description: test event emitted by POST /api/v1/webhooks/{id}/test
+delivery_semantics:
+  replay: 'custody-account events support replay via POST /api/v1/custody-accounts/events/{id}/replay'
+  retries: not published
+  ordering: not published

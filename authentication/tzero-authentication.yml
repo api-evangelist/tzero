@@ -1,0 +1,97 @@
+generated: '2026-09-01'
+method: searched
+source: openapi/tzero-institutional-openapi.json, openapi/tzero-issuance-secondary-markets-openapi.json
+summary:
+  types:
+  - apiKey
+  - http
+  - refreshToken
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: API key generated at app.t0kenizer.com/ta/api-keys
+  sources:
+  - openapi/tzero-institutional-openapi.json
+- name: x-api-key
+  type: apiKey
+  in: header
+  parameter: x-apikey
+  sources:
+  - openapi/tzero-issuance-secondary-markets-openapi.json
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  sources:
+  - openapi/tzero-issuance-secondary-markets-openapi.json
+- name: refreshToken
+  type: refreshToken
+  sources:
+  - openapi/tzero-issuance-secondary-markets-openapi.json
+docs: https://apidocs.tzero.com/docs
+note: 'Derived from both OpenAPI contracts, then upgraded from the tZERO API docs. The two surfaces do NOT share
+  credentials. Note the "refreshToken" scheme in the Issuance & Secondary Markets contract declares type: refreshToken,
+  which is not a valid OpenAPI securityScheme type — it is a vendor value, recorded verbatim.'
+surfaces:
+- surface: issuance-secondary-markets
+  base_url: https://gateway-web-api.tzero.com/app
+  style: api-key + bearer JWT
+  headers:
+  - x-apikey
+  - 'Authorization: Bearer <accessToken>'
+  token_endpoint: POST /auth/v1/api/token
+  refresh_endpoint: POST /auth/v1/api/refresh
+  token_lifetime: 1 hour
+  key_issuance: contact tZERO — no self-serve API signup
+  docs: https://apidocs.tzero.com/docs
+- surface: institutional
+  base_url: https://api.t0direct.com/api/v1
+  style: api-key
+  headers:
+  - X-API-Key
+  key_prefix: t0k_
+  scoped: true
+  key_issuance: app.t0kenizer.com/ta/api-keys (host did not resolve in DNS on 2026-09-01)
+  insufficient_scope_status: 403
+  docs: https://api.t0direct.com/api/v1/docs/
+permissions:
+  note: The Institutional API publishes a named permission model in its OpenAPI info.description. These are API-key
+    scopes, not OAuth scopes — tZERO declares no oauth2 securityScheme anywhere, so no scopes/ artifact is emitted.
+  source: openapi/tzero-institutional-openapi.json#/info/description
+  scopes:
+  - scope: TA_READ
+    group: Transfer Agent
+    description: Read investors, securities, holdings, documents, dividends, corporate actions, proposals
+  - scope: TA_WRITE
+    group: Transfer Agent
+    description: Create/update investors, submit issuances, declare dividends and corporate actions, create voting
+      proposals
+  - scope: TA_TRANSFERS
+    group: Transfer Agent
+    description: Submit and manage book-entry transfers
+  - scope: TA_ADMIN
+    group: Transfer Agent
+    description: Administrative transfer-agent operations
+  - scope: TOKENS_READ
+    group: Tokenization
+    description: Read token configurations and deployments
+  - scope: DEPLOYMENTS_READ
+    group: Tokenization
+    description: Read deployments and operation history
+  - scope: CUSTODY_READ
+    group: Custody
+    description: Read vaults, balances, transfers and whitelisted addresses
+  - scope: FULL_ACCESS
+    group: Master
+    description: Satisfies all scopes — the contract says to use it sparingly
+  reserved_scopes:
+  - TOKENS_WRITE
+  - DEPLOYMENTS_WRITE
+  - PRICE_WRITE
+  - CUSTODY_WRITE
+  - CAPTABLE_*
+  reserved_note: present in the enum but not exposed to customers today

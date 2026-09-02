@@ -1,0 +1,47 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the tZERO Institutional API
+  version: 1.0.0
+extends: openapi/tzero-institutional-openapi.json
+x-provenance:
+  generated: '2026-09-01'
+  method: generated
+  source: openapi/tzero-institutional-openapi.json harvested from https://api.t0direct.com/api/v1/openapi.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: tzero
+    x-apievangelist-harvested-from: https://api.t0direct.com/api/v1/openapi.json
+    x-apievangelist-harvested-on: '2026-09-01'
+    x-apievangelist-surface: institutional
+    x-apievangelist-domain-note: >-
+      Served on api.t0direct.com rather than tzero.com. It is tZERO's own institutional surface — the
+      contract titles itself "tZERO Institutional API Documents", its description opens "The tZERO
+      Institutional API", and it is the target of the "Open Institutional API" link on
+      https://apidocs.tzero.com/docs/institutional.
+    x-apievangelist-artifacts:
+      authentication: authentication/tzero-authentication.yml
+      conventions: conventions/tzero-conventions.yml
+      webhooks: asyncapi/tzero-institutional-webhooks.yml
+      data_model: data-model/tzero-data-model.yml
+      conformance: conformance/tzero-conformance.yml
+- target: $.info
+  update:
+    x-apievangelist-idempotency:
+      header: Idempotency-Key
+      applies_to: dividend, corporate-action and proposal mutations
+      conflict_status: 409
+      body_field: idempotencyKey
+      body_field_applies_to: transfer and issuance requests
+- target: $.paths['/api/v1/settlements/{id}/reverse'].post
+  update:
+    x-apievangelist-reversibility:
+      reverses: an EXECUTED settlement instruction
+      type: reverse
+      window: no time limit published; books an offsetting instruction rather than undoing the original
+- target: $.paths['/api/v1/webhooks/events'].get
+  update:
+    x-apievangelist-probe:
+      note: >-
+        Documented as "No authentication required" but a live anonymous GET on 2026-09-01 returned
+        HTTP 401 UNAUTHORIZED "X-API-Key header is required".

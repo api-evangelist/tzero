@@ -1,0 +1,45 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the tZERO Issuance & Secondary Markets API
+  version: 1.0.0
+extends: openapi/tzero-issuance-secondary-markets-openapi.json
+x-provenance:
+  generated: '2026-09-01'
+  method: generated
+  source: openapi/tzero-issuance-secondary-markets-openapi.json harvested from https://apidocs.tzero.com/api/openapi-spec
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: tzero
+    x-apievangelist-harvested-from: https://apidocs.tzero.com/api/openapi-spec
+    x-apievangelist-harvested-on: '2026-09-01'
+    x-apievangelist-surface: issuance-secondary-markets
+    x-apievangelist-artifacts:
+      authentication: authentication/tzero-authentication.yml
+      conventions: conventions/tzero-conventions.yml
+      errors: errors/tzero-problem-types.yml
+      error_codes: errors/tzero-error-codes.yml
+      data_model: data-model/tzero-data-model.yml
+      lifecycle: lifecycle/tzero-lifecycle.yml
+      conformance: conformance/tzero-conformance.yml
+    x-apievangelist-note: >-
+      The upstream document declares no info.version and no license. Idempotency on this surface is a
+      client-supplied transactionId body field, not a header.
+- target: $.info
+  update:
+    x-apievangelist-idempotency:
+      mechanism: request-body-field
+      field: transactionId
+      applies_to: [createInvestment, updateInvestment, submitInvestment, cancelInvestment, signInvestmentAgreement, createOrder]
+- target: $.paths['/trading/v1/accounts/{accountId}/orders/{orderId}'].delete
+  update:
+    x-apievangelist-reversibility:
+      reverses: createOrder
+      type: cancel
+      window: while the order is still cancellable; 422 "Order cannot be cancelled" past that point
+- target: $.paths['/pi/v1/investments/{investmentId}'].delete
+  update:
+    x-apievangelist-reversibility:
+      reverses: createInvestment
+      type: cancel
+      window: until the investment reaches a non-cancellable status (INVESTMENT_CANNOT_BE_CANCELLED)

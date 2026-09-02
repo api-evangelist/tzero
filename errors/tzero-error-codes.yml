@@ -1,0 +1,157 @@
+generated: '2026-09-01'
+method: derived
+source: openapi/tzero-issuance-secondary-markets-openapi.json#/components/x-businessValidationErrorCodes
+note: Selected business-logic validation codes. Not an exhaustive list; see code/message in error response. Published
+  by tZERO as a vendor extension inside the Issuance & Secondary Markets OpenAPI. The Institutional API returns
+  T0K-prefixed codes (e.g. T0K-SYS-002 resource not found, T0K-V1-INV-001 investor not found, UNAUTHORIZED missing
+  X-API-Key) but does not publish an enumerated registry.
+envelope_field: errors[].code
+code_count: 57
+groups:
+- group: dateOfBirth
+  code_count: 5
+  codes:
+  - code: DATE_OF_BIRTH_REQUIRED
+    message: Date of birth is required
+  - code: DATE_OF_BIRTH_INVALID
+    message: Date of birth is invalid
+  - code: DATE_OF_BIRTH_IN_FUTURE
+    message: Date of birth cannot be in the future
+  - code: DOB_NOT_ALLOWED
+    message: Date of birth not allowed; date cannot be more than 120 years in the past.
+  - code: INVESTOR_AGE_INSUFFICIENT
+    message: Investor must be at least 18 years old to create an account
+- group: internationalAndGovernmentIdentifier
+  code_count: 11
+  codes:
+  - code: TAX_COUNTRY_MUST_BE_US
+    message: Tax country must be US when physical address is US or citizenship country is US
+  - code: GOVERNMENT_IDENTIFIER_TYPE_REQUIRED
+    message: Government identifier type is required
+  - code: GOVERNMENT_IDENTIFIER_COUNTRY_REQUIRED
+    message: Government identifier country is required
+  - code: GOVERNMENT_IDENTIFIER_COUNTRY_INVALID
+    message: Government identifier country must be a two-letter ISO code
+  - code: GOVERNMENT_IDENTIFIER_IDENTIFIER_REQUIRED
+    message: Government identifier value is required
+  - code: GOVERNMENT_IDENTIFIER_VALUE_REQUIRED
+    message: Government identifier value is required
+  - code: GOVERNMENT_IDENTIFIER_TYPE_INVALID
+    message: Government identifier type is not allowed for this tax/country combination
+  - code: PASSPORT_REQUIRED_FOR_NON_US
+    message: A passport number is required when physical address is not in the US
+  - code: GOVERNMENT_IDENTIFIER_COUNTRY_MISMATCH
+    message: Government identifier country must match user, citizenship, or address country
+  - code: GOVERNMENT_IDENTIFIER_LENGTH_INVALID
+    message: Government identifier length is invalid
+  - code: GOVERNMENT_IDENTIFIER_AT_LEAST_ONE_REQUIRED
+    message: At least one government identifier must be retained; cannot delete all existing identifiers
+- group: jurisdiction
+  code_count: 5
+  codes:
+  - code: JURISDICTION_VALIDATION_UNAVAILABLE
+    message: 'Unable to validate jurisdiction: registration options unavailable'
+  - code: JURISDICTION_COUNTRY_NOT_ALLOWED
+    message: Country is not in the allowed list for account applications (422)
+  - code: JURISDICTION_STATE_REQUIRED_FOR_US
+    message: State (region) is required when country is US
+  - code: JURISDICTION_STATE_FORMAT_INVALID
+    message: State (region) must be a two-character code when country is US
+  - code: JURISDICTION_STATE_NOT_ALLOWED
+    message: State is not in the allowed list for account applications
+- group: investmentsCreate
+  code_count: 11
+  codes:
+  - code: ACCOUNT_ID_REQUIRED
+    message: Account identifier is required
+  - code: TRANSACTION_ID_REQUIRED
+    message: Transaction ID is required
+  - code: AMOUNT_REQUIRED
+    message: Amount is required
+  - code: AMOUNT_INVALID
+    message: Amount must be positive
+  - code: NUMBER_OF_SHARES_INVALID
+    message: Number of shares must be positive when provided
+  - code: ASSET_NOT_OPEN
+    message: Asset is not open for investment
+  - code: REG_CF_TERMS_NOT_ACCEPTED
+    message: Reg CF investment terms must be accepted (Reg CF assets)
+  - code: REG_CF_TERMS_ONLY_APPLICABLE_TO_REG_CF
+    message: Reg CF terms acceptance is only applicable to Reg CF assets
+  - code: ANNUAL_INCOME_REQUIRED
+    message: Annual income is required for Reg A and Reg CF investments
+  - code: NET_WORTH_REQUIRED
+    message: Net worth is required for Reg A and Reg CF investments
+  - code: INVESTMENT_CREATE_ERROR
+    message: Investment could not be created
+- group: investmentsUpdate
+  code_count: 8
+  codes:
+  - code: ACCOUNT_ID_REQUIRED
+    message: Account identifier is required
+  - code: TRANSACTION_ID_REQUIRED
+    message: Transaction ID is required
+  - code: AMOUNT_INVALID
+    message: Amount must be positive when provided
+  - code: NUMBER_OF_SHARES_INVALID
+    message: Number of shares must be positive when provided
+  - code: PAYMENT_TYPE_NOT_SUPPORTED
+    message: Only WIRE payment type is supported
+  - code: INVESTMENT_UPDATE_NOT_ALLOWED
+    message: Investment update not allowed
+  - code: INVESTMENT_STATUS_NOT_ALLOWED_TO_UPDATE
+    message: Investment not allowed to be updated in current status
+  - code: ASSET_NOT_RELATED_TO_INVESTMENT
+    message: Asset is not related to the investment (path assetId mismatch)
+- group: investmentsSubmit
+  code_count: 6
+  codes:
+  - code: ACCOUNT_ID_REQUIRED
+    message: Account identifier is required
+  - code: TRANSACTION_ID_REQUIRED
+    message: Transaction ID is required
+  - code: COUNTRY_MISMATCH
+    message: Jurisdiction is not supported; cannot proceed with payment or submission
+  - code: PAYMENT_SUBMISSION_FAILED
+    message: Payment could not be submitted
+  - code: PAYMENT_SUBMIT_ERROR
+    message: Payment submission error
+  - code: INVESTMENT_NOT_FOUND
+    message: Investment not found or can no longer be submitted
+- group: investmentsCancel
+  code_count: 3
+  codes:
+  - code: ACCOUNT_ID_REQUIRED
+    message: Account identifier is required
+  - code: TRANSACTION_ID_REQUIRED
+    message: Transaction ID is required
+  - code: INVESTMENT_CANNOT_BE_CANCELLED
+    message: This investment can no longer be canceled
+- group: investmentsAgreement
+  code_count: 8
+  codes:
+  - code: ACCOUNT_ID_REQUIRED
+    message: Account identifier is required
+  - code: TRANSACTION_ID_REQUIRED
+    message: Transaction ID is required
+  - code: USER_SIGNATURE_REQUIRED
+    message: User signature (full name) is required
+  - code: USER_SIGNATURE_CANNOT_BE_BLANK
+    message: User signature cannot be blank
+  - code: VERSION_REQUIRED
+    message: MSA version is required
+  - code: VERSION_CANNOT_BE_BLANK
+    message: MSA version cannot be blank
+  - code: ASSET_NOT_RELATED_TO_INVESTMENT
+    message: Asset is not related to the investment (path assetId mismatch)
+  - code: SIGNATURE_NAME_MISMATCH
+    message: Signature name must match the account holder's name
+observed_institutional_codes:
+- code: T0K-SYS-002
+  message: The requested resource was not found
+  observed_at: https://api.t0direct.com/swagger.json
+  http_status: 404
+- code: UNAUTHORIZED
+  message: X-API-Key header is required
+  observed_at: https://api.t0direct.com/api/v1/webhooks/events
+  http_status: 401

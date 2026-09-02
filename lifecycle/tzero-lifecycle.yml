@@ -1,0 +1,48 @@
+generated: '2026-09-01'
+method: searched
+source: https://apidocs.tzero.com/docs
+versioning:
+  scheme: uri-path
+  current:
+    issuance_secondary_markets: v1 (/pi/v1, /auth/v1, /markets/v1, /trading/v1)
+    institutional: v1 (/api/v1) — OpenAPI info.version 1.1.0
+    fix: FIX 4.2 (order entry, IOI market data) and FIX 4.4 (drop copy, market data)
+  docs: https://apidocs.tzero.com/docs
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: >-
+    No deprecation or sunset policy is published on apidocs.tzero.com or tzero.com, and
+    neither OpenAPI marks any operation deprecated. The Institutional contract does declare
+    a 410 Gone response on document endpoints, but that is resource lifecycle, not API
+    deprecation. No Deprecation pointer is emitted from this file.
+sla:
+  url: null
+  uptime_target: null
+  note: No public SLA or uptime commitment was found; institutional terms are contracted.
+status_page: null
+status_page_probe:
+  - {url: 'https://status.tzero.com', result: NXDOMAIN}
+  - {url: 'https://tzero.com/support', status: 200, note: 'renders an empty support shell, no incident history'}
+note_no_status_page: >-
+  No status page was found on any tZERO host, so no StatusPage pointer is emitted.
+deprecated_operations: []
+market_lifecycle:
+  note: >-
+    tZERO publishes trading-session lifecycle rather than API lifecycle: GET /markets/v1/schedules
+    returns pre-market, regular and post-market windows, and the FIX Market Data specification
+    carries Trading Session Status (PRE / OPNX / CORE / POST / UNKNWN) and Security Status
+    (halt, halt reason, short-sale restriction) messages.
+  evidence:
+  - openapi/tzero-issuance-secondary-markets-openapi.json#getMarketSchedules
+  - https://apidocs.tzero.com/docs/fix/market-data
+  ats_hours: >-
+    Effective 2025-12-15 the tZERO ATS supports 24/7 order entry and 23.5 hours of trading on
+    business days (execution windows 12:05am–11:35pm ET, Monday–Friday, excluding market holidays).
+  ats_hours_source: https://www.tzero.com/news/tzero-to-launch-24-7-order-entry-and-extended-ats-trading-hours-enhancing-interoperability-with
+review_gates:
+  note: >-
+    Dividend, corporate-action and voting-proposal declarations submitted to the Institutional
+    API enter PENDING_REVIEW, where a tZERO transfer-agent reviewer approves or rejects each one
+    under an SEC Rule 17Ad-2 regulatory turnaround timer.
+  source: openapi/tzero-institutional-openapi.json#/info/description

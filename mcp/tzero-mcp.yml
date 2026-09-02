@@ -1,0 +1,370 @@
+generated: '2026-09-01'
+method: derived
+source: openapi/tzero-issuance-secondary-markets-openapi.json, openapi/tzero-institutional-openapi.json
+status: candidate
+note: tZERO publishes NO MCP server. Searched the developer docs, tzero.com, the npm registry and mcp.tzero.com
+  (NXDOMAIN); nothing was found. The tools below are a CANDIDATE surface derived one-to-one from the published OpenAPI
+  operations so an integrator can see what an MCP server over tZERO would expose. Nothing here is served by tZERO
+  and no endpoint is asserted.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+search_evidence:
+- url: https://apidocs.tzero.com/docs
+  status: 200
+  finding: no MCP mention
+- url: https://mcp.tzero.com/mcp
+  status: null
+  finding: DNS NXDOMAIN
+- url: https://registry.npmjs.org/-/v1/search?text=tzero
+  status: 200
+  finding: no tZERO MCP package
+server:
+  name: tzero
+  transport: null
+  url: null
+tool_count: 112
+tools:
+- name: onboardIndividualAccount
+  description: Onboard Individual account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#onboardIndividualAccount
+- name: updateInvestor
+  description: Update user of the account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#updateInvestor
+- name: getAccountById
+  description: Get account by ID
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getAccountById
+- name: getFinancialInfo
+  description: Get financial information for user
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getFinancialInfo
+- name: patchFinancialInfo
+  description: Add or update financial information for user
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#patchFinancialInfo
+- name: addTrustedContact
+  description: Add trusted contact
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#addTrustedContact
+- name: removeTrustedContact
+  description: Remove trusted contact
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#removeTrustedContact
+- name: getUserKycStatus
+  description: Get KYC status for user
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getUserKycStatus
+- name: triggerKyc
+  description: Trigger KYC for user
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#triggerKyc
+- name: createInvestment
+  description: Create investment
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#createInvestment
+- name: updateInvestment
+  description: Update investment
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#updateInvestment
+- name: addInvestmentPayment
+  description: Add Payment details to the investment on file.
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#addInvestmentPayment
+- name: addBankAccount
+  description: Add bank account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#addBankAccount
+- name: getBankAccounts
+  description: Get bank accounts
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getBankAccounts
+- name: removeBankAccount
+  description: Remove bank account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#removeBankAccount
+- name: transfer
+  description: Initiate Deposit/Withdrawal from/to the Customer's Account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#transfer
+- name: getAccountBalance
+  description: Get Account Balance
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getAccountBalance
+- name: getInvestmentsByAccount
+  description: Get all investments for account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getInvestmentsByAccount
+- name: submitInvestment
+  description: Submit investment
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#submitInvestment
+- name: cancelInvestment
+  description: Cancel investment
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#cancelInvestment
+- name: signInvestmentAgreement
+  description: Sign MSA for investment
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#signInvestmentAgreement
+- name: loginUsingPOST
+  description: Get Bearer token
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#loginUsingPOST
+- name: refreshTokenUsingPOST
+  description: Refresh Token
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#refreshTokenUsingPOST
+- name: getWireInstructions
+  description: Download wire instructions.
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getWireInstructions
+- name: getMarketSchedules
+  description: Get market schedules
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getMarketSchedules
+- name: getOrderFee
+  description: Calculates an estimated fee for the trade.
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getOrderFee
+- name: createOrder
+  description: Creates an order for an Account
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#createOrder
+- name: getOrders
+  description: Gets All orders placed for an Account.
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getOrders
+- name: getOrder
+  description: Retrieve a single order for the given Order Id
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#getOrder
+- name: cancelOrder
+  description: Attempts to a Cancel a OPEN Order
+  source_operation: openapi/tzero-issuance-secondary-markets-openapi.json#cancelOrder
+- name: get_investors
+  description: List investors
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/investors/
+- name: create_investors
+  description: Create investor
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/investors/
+- name: get_investors
+  description: Get investor
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/investors/{id}
+- name: update_investors
+  description: Update investor
+  source_operation: openapi/tzero-institutional-openapi.json#PATCH /api/v1/investors/{id}
+- name: get_investors_holdings
+  description: Get investor holdings
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/investors/{id}/holdings
+- name: get_securities
+  description: List securities
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/securities/
+- name: get_securities
+  description: Get security
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/securities/{id}
+- name: get_securities_captable
+  description: Get cap table
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/securities/{id}/captable
+- name: get_securities_holders
+  description: List security holders
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/securities/{id}/holders
+- name: get_transfers
+  description: List transfer requests
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/transfers/
+- name: create_transfers
+  description: Submit transfer request
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/transfers/
+- name: get_transfers
+  description: Get transfer request
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/transfers/{id}
+- name: create_transfers_batch
+  description: Batch submit transfer requests
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/transfers/batch
+- name: update_transfers_status
+  description: Approve or reject transfer
+  source_operation: openapi/tzero-institutional-openapi.json#PATCH /api/v1/transfers/{id}/status
+- name: get_issuances
+  description: List issuance requests
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/issuances/
+- name: create_issuances
+  description: Submit issuance request
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/issuances/
+- name: get_issuances
+  description: Get issuance request
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/issuances/{id}
+- name: create_issuances_approve
+  description: Approve issuance request
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/issuances/{id}/approve
+- name: create_issuances_reject
+  description: Reject issuance request
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/issuances/{id}/reject
+- name: get_documents
+  description: List documents
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/documents/
+- name: get_documents
+  description: Get document
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/documents/{id}
+- name: delete_documents
+  description: Delete document
+  source_operation: openapi/tzero-institutional-openapi.json#DELETE /api/v1/documents/{id}
+- name: get_documents_download
+  description: Get short-lived download URL
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/documents/{id}/download
+- name: create_documents_upload_url
+  description: Request document upload URL
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/documents/upload-url
+- name: update_documents_upload
+  description: Confirm document upload
+  source_operation: openapi/tzero-institutional-openapi.json#PUT /api/v1/documents/upload/{uploadToken}
+- name: get_webhooks_events
+  description: List available webhook events
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/webhooks/events
+- name: get_webhooks
+  description: List webhook subscriptions
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/webhooks/
+- name: create_webhooks
+  description: Create webhook subscription
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/webhooks/
+- name: update_webhooks
+  description: Update webhook subscription
+  source_operation: openapi/tzero-institutional-openapi.json#PATCH /api/v1/webhooks/{id}
+- name: delete_webhooks
+  description: Delete webhook subscription
+  source_operation: openapi/tzero-institutional-openapi.json#DELETE /api/v1/webhooks/{id}
+- name: create_webhooks_test
+  description: Send test webhook event
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/webhooks/{id}/test
+- name: get_settlements
+  description: List settlement instructions
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/settlements/
+- name: create_settlements
+  description: Submit settlement instruction
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/
+- name: get_settlements
+  description: Get settlement instruction
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/settlements/{id}
+- name: create_settlements_approve
+  description: Approve settlement instruction
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/{id}/approve
+- name: create_settlements_reject
+  description: Reject settlement instruction
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/{id}/reject
+- name: create_settlements_cancel
+  description: Cancel settlement instruction
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/{id}/cancel
+- name: create_settlements_execute
+  description: Manually execute approved settlement
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/{id}/execute
+- name: create_settlements_reverse
+  description: Create reversal of an executed settlement
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/settlements/{id}/reverse
+- name: get_settlements_configs
+  description: List settlement configs (issuer + per-security)
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/settlements/configs
+- name: update_settlements_configs
+  description: Upsert settlement config (issuer default or per-security override)
+  source_operation: openapi/tzero-institutional-openapi.json#PUT /api/v1/settlements/configs
+- name: get_investor_accounts
+  description: List investor accounts
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/investor-accounts/
+- name: create_investor_accounts
+  description: Create investor account (omnibus parent or sub-account)
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/investor-accounts/
+- name: create_investor_accounts_reconcile
+  description: Run omnibus reconciliation snapshot (parent vs Σ(children))
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/investor-accounts/{id}/reconcile
+- name: get_dividends
+  description: List dividends
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/dividends/
+- name: create_dividends
+  description: Declare a dividend (enters tZERO review)
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/dividends/
+- name: get_dividends
+  description: Get a dividend with payment rollups
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/dividends/{id}
+- name: get_dividends_funding
+  description: Get USDC funding deposit instructions for a CASH dividend
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/dividends/{id}/funding
+- name: get_dividends_reconciliation
+  description: 'Reconcile a dividend: declared vs distributed'
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/dividends/{id}/reconciliation
+- name: get_dividends_payment_tokens
+  description: List approved payment tokens for a security
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/dividends/payment-tokens
+- name: create_dividends_cancel
+  description: Cancel a dividend
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/dividends/{id}/cancel
+- name: get_corporate_actions
+  description: List corporate actions
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/corporate-actions/
+- name: create_corporate_actions
+  description: Declare a corporate action (enters tZERO review)
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/corporate-actions/
+- name: get_corporate_actions
+  description: Get a corporate action
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/corporate-actions/{id}
+- name: create_corporate_actions_cancel
+  description: Cancel a corporate action
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/corporate-actions/{id}/cancel
+- name: get_proposals
+  description: List proposals
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/proposals/
+- name: create_proposals
+  description: Create a voting proposal (enters tZERO review)
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/proposals/
+- name: get_proposals
+  description: Get a proposal with running tallies
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/proposals/{id}
+- name: get_proposals_results
+  description: Get final results with on-chain anchors
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/proposals/{id}/results
+- name: create_proposals_cancel
+  description: Cancel a proposal
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/proposals/{id}/cancel
+- name: get_tokens
+  description: List tokens
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/tokens/
+- name: get_tokens
+  description: Get token
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/tokens/{id}
+- name: get_deployments
+  description: List deployments
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/deployments/
+- name: get_deployments
+  description: Get deployment
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/deployments/{id}
+- name: get_deployments_operations
+  description: List deployment operations
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/deployments/{id}/operations
+- name: get_custody_vaults
+  description: List custody vaults
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/vaults
+- name: get_custody_vaults
+  description: Get custody vault
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/vaults/{id}
+- name: get_custody_transfers
+  description: List custody transfers
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/transfers
+- name: get_custody_whitelist
+  description: List whitelisted addresses
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/whitelist
+- name: get_custody_whitelist
+  description: Get whitelisted address
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/whitelist/{id}
+- name: get_custody_vaults_balances
+  description: Get live vault balances
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/vaults/{id}/balances
+- name: get_custody_supported_assets
+  description: List supported assets
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/supported-assets
+- name: create_custody_validate_address
+  description: Validate an address
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/custody/validate-address
+- name: get_custody_estimate_fee
+  description: Estimate network fee
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/custody/estimate-fee/{assetId}
+- name: create_subred_sessions
+  description: Mint an embed-session token
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/subred/sessions
+- name: get_subred_embed_me
+  description: Resolve the current embed session
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/subred/embed/me
+- name: get_subred_embed_securities
+  description: List eligible securities
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/subred/embed/securities
+- name: get_subred_embed_wallet
+  description: Get investor wallet + buying power
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/subred/embed/wallet
+- name: create_subred_embed_subscriptions
+  description: Subscribe (buy) with USDC
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/subred/embed/subscriptions
+- name: create_subred_embed_subscriptions_pay_from_balance
+  description: Pay a subscription from custody balance
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/subred/embed/subscriptions/{instructionId}/pay-from-balance
+- name: get_subred_embed_orders_status
+  description: Order status
+  source_operation: openapi/tzero-institutional-openapi.json#GET /api/v1/subred/embed/orders/{instructionId}/status
+- name: create_subred_embed_redemptions
+  description: Redeem for USDC
+  source_operation: openapi/tzero-institutional-openapi.json#POST /api/v1/subred/embed/redemptions
+pointer_policy: 'NO type: MCPServer pointer is emitted in apis.yml for this file. tZERO ships no MCP server; the
+  tools below are a derived candidate. An MCPServer pointer would credit tZERO with an agent surface it does not
+  serve, the same way a WellKnown pointer over an all-404 probe would.'

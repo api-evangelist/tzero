@@ -1,0 +1,184 @@
+generated: '2026-09-01'
+method: searched
+source: https://apidocs.tzero.com/docs
+sources:
+- https://apidocs.tzero.com/docs
+- https://api.t0direct.com/api/v1/openapi.json
+- openapi/tzero-issuance-secondary-markets-openapi.json
+- openapi/tzero-institutional-openapi.json
+note: >-
+  tZERO ships two REST surfaces with DIFFERENT conventions. The Issuance & Secondary
+  Markets API (gateway-web-api.tzero.com/app) uses an x-apikey header plus a short-lived
+  bearer JWT and a client-supplied transactionId for idempotency. The Institutional API
+  (api.t0direct.com/api/v1) uses a scoped X-API-Key, page/perPage pagination, an
+  Idempotency-Key header on review-gated mutations, and HMAC-signed webhooks. Both are
+  captured below, keyed by surface.
+
+authentication:
+  issuance_secondary_markets:
+    style: api-key + bearer JWT
+    headers: [x-apikey, 'Authorization: Bearer <accessToken>']
+    token_endpoint: POST /auth/v1/api/token
+    refresh_endpoint: POST /auth/v1/api/refresh
+    token_lifetime: 1 hour
+    docs: https://apidocs.tzero.com/docs
+  institutional:
+    style: api-key
+    headers: [X-API-Key]
+    key_prefix: t0k_
+    scoped: true
+    scopes_documented_in: info.description of openapi/tzero-institutional-openapi.json
+    key_issuance: app.t0kenizer.com/ta/api-keys (host did not resolve in DNS on 2026-09-01)
+
+idempotency:
+  supported: true
+  surfaces:
+  - surface: institutional
+    mechanism: header
+    header: Idempotency-Key
+    scope: >-
+      Required on dividend, corporate-action and proposal mutations. An exact retry
+      replays the original response; reusing a key with a DIFFERENT payload returns 409 Conflict.
+    conflict_status: 409
+    retention: not published
+    evidence: openapi/tzero-institutional-openapi.json#/info/description
+  - surface: institutional
+    mechanism: request-body field
+    field: idempotencyKey
+    scope: Transfer and issuance requests. Submitting the same key twice returns the original record without creating a duplicate.
+    evidence: openapi/tzero-institutional-openapi.json#/info/description
+  - surface: issuance_secondary_markets
+    mechanism: request-body field
+    field: transactionId
+    scope: >-
+      Client-provided id for idempotency and auditing on investment create/update/submit/cancel/agreement
+      and order creation; required and non-blank. TRANSACTION_ID_REQUIRED is returned when absent.
+    evidence: openapi/tzero-issuance-secondary-markets-openapi.json#/components/schemas/CreateInvestmentRequest
+  retention: not published
+
+pagination:
+  institutional:
+    style: page-number
+    params: [page, perPage]
+    response_object: pagination
+    response_fields: [total, page, perPage, totalPages]
+    evidence: openapi/tzero-institutional-openapi.json#/components/schemas/PaginationMeta
+  issuance_secondary_markets:
+    style: none-published
+    note: >-
+      List endpoints (orders, bank accounts, investments) take domain filters (status, from/to,
+      symbol, zone) but publish no page/cursor parameters and no pagination envelope.
+
+response_envelope:
+  institutional:
+    success: '{ "data": ..., "pagination": { ... } }'
+    error: '{ "success": false, "error": { "code": "T0K-...", "message": "..." } }'
+  issuance_secondary_markets:
+    error: '{ "errors": [ { "code": "...", "message": "...", "field": "<json path>", "details": { } } ] }'
+    note: RFC 9457 application/problem+json is NOT used on either surface.
+
+field_expansion:
+  supported: false
+  note: No expand / fields / sparse-fieldset parameters are declared in either contract.
+
+metadata:
+  supported: false
+  note: No free-form metadata object is exposed on the published resources.
+
+request_tracing:
+  institutional:
+    note: Error bodies carry an error.code; no request-id response header is documented.
+  issuance_secondary_markets:
+    note: >-
+      The gateway returns a requestId field in its own 404/error envelope (observed on
+      https://gateway-web-api.tzero.com/app/ probes); it is not documented in the contract.
+    observed: '{"timestamp":...,"path":"/","status":404,"error":"Not Found","requestId":"a25d503d-850607"}'
+
+versioning:
+  scheme: uri-path
+  issuance_secondary_markets: /pi/v1, /auth/v1, /markets/v1, /trading/v1
+  institutional: /api/v1 (document version 1.1.0)
+  fix: FIX 4.2 (order entry, IOI market data) and FIX 4.4 (drop copy, market data)
+
+rate_limit_signaling:
+  documented: false
+  see: rate-limits/tzero-rate-limits.yml
+
+reversibility:
+  grade: verified
+  note: >-
+    Both surfaces expose explicit reversal operations. The windows below are STATED by
+    tZERO in the contract/docs; where no window is published that is recorded as such
+    rather than assumed.
+  write_surfaces:
+  - surface: issuance_secondary_markets
+    action: create an order on the tZERO ATS
+    operation: createOrder
+    reversal_operation: cancelOrder
+    reversal_type: cancel
+    window: >-
+      While the order is still cancellable. A cancel attempt against an order that is no
+      longer cancellable returns HTTP 422 "Order cannot be cancelled".
+    window_stated: true
+    evidence: openapi/tzero-issuance-secondary-markets-openapi.json#/paths/~1trading~1v1~1accounts~1{accountId}~1orders~1{orderId}/delete
+  - surface: issuance_secondary_markets
+    action: create an investment in a primary offering
+    operation: createInvestment
+    reversal_operation: cancelInvestment
+    reversal_type: cancel
+    window: >-
+      Until the investment reaches a status that can no longer be canceled — the API returns
+      INVESTMENT_CANNOT_BE_CANCELLED ("This investment can no longer be canceled") past that point.
+    window_stated: true
+    evidence: openapi/tzero-issuance-secondary-markets-openapi.json#/components/x-businessValidationErrorCodes/investmentsCancel
+  - surface: institutional
+    action: submit a settlement instruction
+    operation: POST /api/v1/settlements/{id}/cancel and POST /api/v1/settlements/{id}/reverse
+    reversal_type: cancel (pre-execution) / reverse (post-execution)
+    window: >-
+      Cancel applies before execution; after an instruction is EXECUTED the reversal path is
+      "Create reversal of an executed settlement", which books a new offsetting instruction
+      rather than undoing the original. No time limit is published for either.
+    window_stated: true
+    evidence: openapi/tzero-institutional-openapi.json#/paths/~1api~1v1~1settlements~1{id}~1reverse
+  - surface: institutional
+    action: declare a dividend / corporate action / voting proposal
+    operation: POST /api/v1/dividends, /api/v1/corporate-actions, /api/v1/proposals
+    reversal_operation: POST .../{id}/cancel
+    reversal_type: cancel
+    window: >-
+      Declarations land in PENDING_REVIEW while a tZERO transfer-agent reviewer approves or
+      rejects under an SEC Rule 17Ad-2 regulatory turnaround timer; cancel is exposed on each
+      entity. tZERO does not publish the point after execution at which cancel stops working.
+    window_stated: partial
+    evidence: openapi/tzero-institutional-openapi.json#/info/description
+  - surface: institutional
+    action: submit a transfer request
+    operation: POST /api/v1/transfers
+    reversal_operation: PATCH /api/v1/transfers/{id}/status (approve or reject)
+    reversal_type: reject-before-settlement
+    window: while the transfer request is pending approval; no time limit published
+    window_stated: false
+  - surface: institutional
+    action: delete a document
+    operation: DELETE /api/v1/documents/{id}
+    reversal_operation: null
+    reversal_type: none
+    window: no restore path is published
+    window_stated: false
+
+dry_run_mode:
+  supported: false
+  note: >-
+    No dry-run / simulate / preview parameter is declared on either surface. The closest
+    published rehearsal affordances are GET /trading/v1/fee (price an order's fee before
+    placing it), POST /api/v1/custody/validate-address, GET /api/v1/custody/estimate-fee/{assetId}
+    and POST /api/v1/webhooks/{id}/test.
+
+cross_links:
+  errors: errors/tzero-problem-types.yml
+  error_codes: errors/tzero-error-codes.yml
+  authentication: authentication/tzero-authentication.yml
+  lifecycle: lifecycle/tzero-lifecycle.yml
+  rate_limits: rate-limits/tzero-rate-limits.yml
+  webhooks: asyncapi/tzero-institutional-webhooks.yml

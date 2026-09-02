@@ -1,0 +1,44 @@
+generated: '2026-09-01'
+method: searched
+source: https://apidocs.tzero.com/docs/fix
+note: >-
+  tZERO publishes no product changelog or release-notes feed for its REST APIs. The only dated,
+  versioned change record on the developer surface is the Revision History table carried inside
+  each FIX specification page. Those are captured verbatim below. The Institutional OpenAPI
+  carries info.version 1.1.0 with no dated history; the Issuance & Secondary Markets OpenAPI
+  declares no version at all.
+scheme: per-document revision history (FIX specs) + semver in OpenAPI info.version (Institutional)
+current_version:
+  institutional_openapi: 1.1.0
+  issuance_secondary_markets_openapi: null
+  fix_market_data_spec: '8 (2025-12-20)'
+  fix_ioi_market_data_spec: '1.2 (2025-12-20)'
+documents:
+- document: FIX 4.4 Market Data Specification
+  url: https://apidocs.tzero.com/docs/fix/market-data
+  footer: tZERO Technologies · FIX 4.4 Market Data Specification · December 2025
+  entries:
+  - {version: '8', date: '2025-12-20', highlights: ['Added updated tZERO logo to the heading'], breaking: false}
+  - {version: '7', date: '2020-10-27', highlights: ['Added tag 8724 ShortSellRstrcn to the Security Status message', 'Removed "not supported" text for tag 266 AggregatedBook=N', 'Grammar updates'], breaking: false}
+  - {version: '6', date: '2020-08-19', highlights: ['Added table of contents', 'Added additional values to tag 269 MDEntryType', 'Added additional values to tag 327 HaltReason', 'Added Revision History section'], breaking: false}
+  - {version: '5', date: '2020-01-06', highlights: ['Added Auction State (90) to tag 327 HaltReason'], breaking: false}
+  - {version: '4', date: '2019-11-05', highlights: ['Redefined tag 277 TradeCondition to account for imbalances'], breaking: true}
+  - {version: '3', date: '2019-09-17', highlights: ['Added tZERO logo to the heading'], breaking: false}
+  - {version: '2', date: '2019-08-12', highlights: ['Added disconnect behavior to Scenarios section', 'Added Trading Session Status Request message', 'Added Security Status Request message'], breaking: false}
+  - {version: '1', date: '2019-07-12', highlights: ['Added values for tag 277 TradeCondition', 'Added tag 893 LastFragment to Market Data Snapshot', 'Split scenario diagrams into their own section'], breaking: false}
+  - {version: '0', date: '2019-07-03', highlights: ['Original'], breaking: false}
+- document: FIX IOI Market Data Specification
+  url: https://apidocs.tzero.com/docs/fix/ioi-market-data
+  entries:
+  - {version: '1.2', date: '2025-12-20', highlights: ['Incorporated new tZERO logo'], breaking: false}
+  - {version: '1', date: '2022-07-28', highlights: ['Added milliseconds to timestamps', 'Added MDEntryDate and MDEntryTime to Market Data Snapshot', 'Added Market Data Request message type'], breaking: false}
+  - {version: '0', date: '2017-07-18', highlights: ['Original'], breaking: false}
+- document: FIX 4.4 DROPCOPY Specification
+  url: https://apidocs.tzero.com/docs/fix/drop-copy
+  footer: tZERO Technologies · FIX 4.4 DROPCOPY Specification · December 2025
+  entries: []
+  note: page carries a Revision History heading in the nav but no populated table
+- document: FIX 4.2 Order Entry Specification
+  url: https://apidocs.tzero.com/docs/fix/order-entry
+  entries: []
+  note: page carries a Revision History heading in the nav but no populated table

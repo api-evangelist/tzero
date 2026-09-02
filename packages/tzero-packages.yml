@@ -1,0 +1,19 @@
+generated: '2026-09-01'
+method: searched
+source: npm registry search, PyPI, tZERO developer docs
+package_count: 0
+official_count: 0
+note: >-
+  No first-party tZERO client library exists on any public registry. npm search for "tzero"
+  returns only unrelated third-party packages (tzero-classes / tzero-annotations / tzero-core by
+  TerraZero, @t-0/usdt-pay-sdk by t-0-network); PyPI "tzero" is an unrelated IRC timeboxing tool by
+  Susam Pal; t0direct and tzero-sdk are absent from PyPI. github.com/tZERO-dev exists (created
+  2018-02-11, name "tZERO") but currently exposes 0 public repositories. tZERO's docs ship cURL
+  examples only — integration is against the raw REST/FIX surfaces.
+packages: []
+registries_probed:
+- {registry: npm, query: tzero, status: 200, first_party_hits: 0}
+- {registry: pypi, package: tzero, status: 200, first_party: false, note: 'unrelated project (IRC timeboxing)'}
+- {registry: pypi, package: t0direct, status: 404}
+- {registry: pypi, package: tzero-sdk, status: 404}
+- {registry: github, org: tZERO-dev, status: 200, public_repos: 0}
