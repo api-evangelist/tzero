@@ -10,6 +10,20 @@ description: 'tZERO Technologies is a US financial-technology company building r
   and an Institutional transfer-agent / tokenization / custody API on api.t0direct.com) alongside FIX
   4.2 / 4.4 specifications for order entry, drop copy and market data.'
 url: https://raw.githubusercontent.com/api-evangelist/tzero/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source:
+  - authentication
+  - rate-limits
+  - security
+  generated: '2026-09-03'
+  method: derived
 image: https://tzero.com/api/sanity-assets/images/jpd7ydtd/pre-prod/bcb9e8e2a5c5bf41d9938781a368d92635b0923a-595x156.svg?w=1200&h=627&fit=crop&auto=format
 x-type: company
 x-source: harvest:secondary-market
