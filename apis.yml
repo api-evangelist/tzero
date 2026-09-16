@@ -40,59 +40,32 @@ tags:
 - Transfer Agent
 - Custody
 - Blockchain
+- Financial-Services
+- Securities
+- Market Data
+- FIX Protocol
+tags_raw:
+- Company
+- Digital Securities
+- Tokenization
+- Capital Markets
+- Trading
+- Alternative Trading System
+- Transfer Agent
+- Custody
+- Blockchain
 - Financial Services
 - Securities
 - Market Data
 - FIX Protocol
 apis:
-- aid: tzero:issuance-secondary-markets
-  name: tZERO Issuance & Secondary Markets API
-  description: REST/JSON API for creating individual broker-dealer accounts, triggering and reviewing
-    KYC on investors, browsing primary offerings and managing investments, linking bank accounts and moving
-    funds, reading balances, retrieving market schedules and public price history/snapshots, and placing,
-    listing and cancelling orders on the tZERO ATS. Authenticated with an x-apikey header plus a bearer
-    JWT obtained from POST /auth/v1/api/token.
-  humanURL: https://apidocs.tzero.com/docs/explorer
-  baseURL: https://gateway-web-api.tzero.com/app
-  tags:
-  - Trading
-  - Onboarding
-  - KYC
-  - Investments
-  - Market Data
-  properties:
-  - type: OpenAPI
-    url: openapi/tzero-issuance-secondary-markets-openapi.json
-  - type: Documentation
-    url: https://apidocs.tzero.com/docs
-  - type: APIReference
-    url: https://apidocs.tzero.com/docs/explorer
-- aid: tzero:institutional
-  name: tZERO Institutional API
-  description: 'REST/JSON API giving institutional issuers and partners programmatic access to tZERO transfer-agent,
-    tokenization and custody operations: investors and holdings, securities and cap tables, book-entry
-    transfers, issuance requests, documents, dividends, corporate actions, voting proposals, settlement
-    instructions, omnibus investor accounts, token deployments, custody vaults/whitelists, and HMAC-signed
-    webhooks. Authenticated with an X-API-Key header carrying scoped permissions.'
-  humanURL: https://apidocs.tzero.com/docs/institutional
-  baseURL: https://api.t0direct.com/api/v1
-  tags:
-  - Transfer Agent
-  - Tokenization
-  - Custody
-  - Corporate Actions
-  - Webhooks
-  properties:
-  - type: OpenAPI
-    url: openapi/tzero-institutional-openapi.json
-  - type: APIReference
-    url: https://api.t0direct.com/api/v1/docs/
 - aid: tzero:fix
   name: tZERO FIX API
-  description: FIX 4.2 / 4.4 protocol surface for low-latency order entry, drop-copy execution reports,
-    market data (snapshot and incremental refresh, trading session status, security status) and Indication
-    of Interest (IOI) market data against the tZERO ATS. Message-by-message specifications are published
-    on the tZERO API docs site; session credentials and connectivity are arranged with tZERO.
+  description: >-
+    FIX 4.2 / 4.4 protocol surface for low-latency order entry, drop-copy execution reports, market data
+    (snapshot and incremental refresh, trading session status, security status) and Indication of Interest
+    (IOI) market data against the tZERO ATS. Message-by-message specifications are published on the tZERO
+    API docs site; session credentials and connectivity are arranged with tZERO.
   humanURL: https://apidocs.tzero.com/docs/fix
   tags:
   - FIX Protocol
@@ -102,8 +75,460 @@ apis:
   properties:
   - type: Documentation
     url: https://apidocs.tzero.com/docs/fix
-  x-transport: FIX 4.2 / 4.4 over TCP; session host, port, CompIDs and credentials are arranged with tZERO
-    and are not published
+  x-transport: >-
+    FIX 4.2 / 4.4 over TCP; session host, port, CompIDs and credentials are arranged with tZERO and are
+    not published
+- aid: tzero:tzero-authorization-api
+  name: tZERO Authorization API
+  description: The Authorization API from tZERO — 2 operation(s) for authorization.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Authorization
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-authorization-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-balance-api
+  name: tZERO Balance API
+  description: Retrieving fiat balances and asset position balances for an account.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Balance
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-balance-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-bank-accounts-api
+  name: tZERO Bank Accounts API
+  description: Managing bank accounts linked to an investor account (add, list, delete, verify).
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Bank Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-bank-accounts-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-corporate-actions-api
+  name: tZERO Corporate Actions API
+  description: >-
+    Splits, mergers and other corporate actions — review-gated; on-chain splits broadcast via Fireblocks
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Corporate Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-corporate-actions-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-custody-accounts-api
+  name: tZERO Custody Accounts API
+  description: The Custody Accounts API from tZERO — 12 operation(s) for custody accounts.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Custody Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-custody-accounts-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-custody-assets-api
+  name: tZERO Custody Assets API
+  description: Supported assets, address validation, and fee estimation (live)
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Custody Assets
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-custody-assets-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-custody-transfers-api
+  name: tZERO Custody Transfers API
+  description: Transfers of assets out of custody vaults
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Custody Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-custody-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-deployments-api
+  name: tZERO Deployments API
+  description: On-chain instances of tokens and their operation history
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Deployments
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-deployments-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-dividends-api
+  name: tZERO Dividends API
+  description: >-
+    Dividend declarations (cash & stock) — review-gated; on-chain execution via the dividend claim contract
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Dividends
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-dividends-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-documents-api
+  name: tZERO Documents API
+  description: Investor document upload and retrieval
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Documents
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-documents-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-investments-api
+  name: tZERO Investments API
+  description: Investments and assets (create, update, submit, cancel, agreements).
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Investments
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-investments-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-investoraccounts-api
+  name: tZERO Investor Accounts API
+  description: The InvestorAccounts API from tZERO — 2 operation(s) for investoraccounts.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - InvestorAccounts
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-investoraccounts-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-investors-api
+  name: tZERO Investors API
+  description: Investor KYC, accreditation, and holdings management
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Investors
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-investors-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-iso-api
+  name: tZERO Iso API
+  description: The Iso API from tZERO — 4 operation(s) for iso.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Iso
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-iso-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-issuances-api
+  name: tZERO Issuances API
+  description: Primary share issuance requests
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Issuances
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-issuances-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-markets-api
+  name: tZERO Markets API
+  description: Market schedule information including pre-market, regular, and post-market hours.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Markets
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-markets-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-onboarding-api
+  name: tZERO Onboarding API
+  description: Managing accounts and users (create account, KYC, trusted contact, financial info).
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-onboarding-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-proposals-api
+  name: tZERO Proposals API
+  description: >-
+    Shareholder voting — proposal creation and results; off-chain or on-chain (anchored) voting modes
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Proposals
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-proposals-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-securities-api
+  name: tZERO Securities API
+  description: Security and instrument definitions
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Securities
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-securities-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-settlements-api
+  name: tZERO Settlements API
+  description: The Settlements API from tZERO — 8 operation(s) for settlements.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Settlements
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-settlements-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-subred-api
+  name: tZERO Subred API
+  description: The Subred API from tZERO — 1 operation(s) for subred.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Subred
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-subred-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-subred-embed-api
+  name: tZERO SubRed Embed API
+  description: The SubRed Embed API from tZERO — 8 operation(s) for subred embed.
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - SubRed Embed
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-subred-embed-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-tokens-api
+  name: tZERO Tokens API
+  description: Token configurations — the issuer's token blueprints
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-tokens-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-trading-api
+  name: tZERO Trading API
+  description: Order management for secondary-market trading (fees, submit, cancel, list orders).
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Trading
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-trading-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-transfers-api
+  name: tZERO Transfers API
+  description: Book-entry transfer requests (secondary)
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-vaults-api
+  name: tZERO Vaults API
+  description: Custody vaults and their asset wallets
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Vaults
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-vaults-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-webhooks-api
+  name: tZERO Webhooks API
+  description: Webhook subscription management and event delivery
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
+- aid: tzero:tzero-whitelist-api
+  name: tZERO Whitelist API
+  description: Approved external addresses for custody transfers
+  humanURL: https://apidocs.tzero.com/docs/explorer
+  baseURL: https://gateway-web-api.tzero.com/app
+  tags:
+  - Whitelist
+  properties:
+  - type: OpenAPI
+    url: openapi/tzero-whitelist-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.tzero.com/docs
+  - type: APIReference
+    url: https://apidocs.tzero.com/docs/explorer
+  - type: APIReference
+    url: https://api.t0direct.com/api/v1/docs/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
