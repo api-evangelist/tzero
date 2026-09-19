@@ -100,6 +100,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Balances
+  tags_raw:
   - Balance
   properties:
   - type: OpenAPI
@@ -197,6 +199,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Deployment
+  tags_raw:
   - Deployments
   properties:
   - type: OpenAPI
@@ -246,6 +250,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Investment
+  tags_raw:
   - Investments
   properties:
   - type: OpenAPI
@@ -278,6 +284,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Investor
+  tags_raw:
   - Investors
   properties:
   - type: OpenAPI
@@ -294,6 +302,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - ISO
+  tags_raw:
   - Iso
   properties:
   - type: OpenAPI
@@ -391,6 +401,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Settlement
+  tags_raw:
   - Settlements
   properties:
   - type: OpenAPI
@@ -487,6 +499,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Vault
+  tags_raw:
   - Vaults
   properties:
   - type: OpenAPI
@@ -503,6 +517,8 @@ apis:
   humanURL: https://apidocs.tzero.com/docs/explorer
   baseURL: https://gateway-web-api.tzero.com/app
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
