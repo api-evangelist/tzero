@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents SubRed Embed API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: SubRed Embed
+paths:
+  /api/v1/subred/sessions:
+    post:
+      summary: Mint an embed-session token
+      tags:
+      - SubRed Embed
+      description: Server-to-server. Issues a short-lived, investor-scoped token for the embeddable plugin. The issuer is taken from the API key; the investor must belong to it.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SubredSessions
+      x-operation-id-source: derived
+  /api/v1/subred/embed/me:
+    get:
+      summary: Resolve the current embed session
+      tags:
+      - SubRed Embed
+      description: Returns the issuer, investor, and scopes carried by the embed-session token.
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SubredEmbedMe
+      x-operation-id-source: derived
+  /api/v1/subred/embed/securities:
+    get:
+      summary: List eligible securities
+      tags:
+      - SubRed Embed
+      description: Securities the embed-session investor may currently subscribe to (ACTIVE link, priced NAV, ALLOW eligibility).
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SubredEmbedSecurities
+      x-operation-id-source: derived
+  /api/v1/subred/embed/wallet:
+    get:
+      summary: Get investor wallet + buying power
+      tags:
+      - SubRed Embed
+      description: The embed-session investor's bound custodial wallet, on-chain balances, fund URI, and derived buying power. Read-only — never provisions. Pass `securityId` to view the wallet for that security's settlement rail (an EVM security returns its per-chain custody wallet + ERC-20 balance instead of the Stellar wallet).
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SubredEmbedWallet
+      x-operation-id-source: derived
+  /api/v1/subred/embed/subscriptions:
+    post:
+      summary: Subscribe (buy) with USDC
+      tags:
+      - SubRed Embed
+      description: Places a held USDC subscription for the embed-session investor and returns deposit instructions.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SubredEmbedSubscriptions
+      x-operation-id-source: derived
+  /api/v1/subred/embed/subscriptions/{instructionId}/pay-from-balance:
+    post:
+      summary: Pay a subscription from custody balance
+      tags:
+      - SubRed Embed
+      description: App-signed USDC transfer from the investor's custodial wallet to the order's deposit address. Memo-idempotent.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: instructionId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SubredEmbedSubscriptionsByInstructionIdPayFromBalance
+      x-operation-id-source: derived
+  /api/v1/subred/embed/orders/{instructionId}/status:
+    get:
+      summary: Order status
+      tags:
+      - SubRed Embed
+      description: Live settlement status for one of the embed-session investor's own orders.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: instructionId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SubredEmbedOrdersByInstructionIdStatus
+      x-operation-id-source: derived
+  /api/v1/subred/embed/redemptions:
+    post:
+      summary: Redeem for USDC
+      tags:
+      - SubRed Embed
+      description: Places a held USDC redemption for the embed-session investor; USDC is paid to their own wallet.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SubredEmbedRedemptions
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

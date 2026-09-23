@@ -1,0 +1,98 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Proposals API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Proposals
+  description: Shareholder voting — proposal creation and results; off-chain or on-chain (anchored) voting modes
+paths:
+  /api/v1/proposals/:
+    get:
+      summary: List proposals
+      tags:
+      - Proposals
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1Proposals
+      x-operation-id-source: derived
+    post:
+      summary: Create a voting proposal (enters tZERO review)
+      tags:
+      - Proposals
+      description: Creates the proposal in PENDING_REVIEW under a Rule 17Ad-2 SLA timer. On approval, voting opens (ON_CHAIN proposals are anchored with their record block + terms hash first). Investors vote in their own portal accounts — votes cannot be submitted through this API. Requires Idempotency-Key.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1Proposals
+      x-operation-id-source: derived
+  /api/v1/proposals/{id}:
+    get:
+      summary: Get a proposal with running tallies
+      tags:
+      - Proposals
+      description: Option-level votesCount and sharesVoted update live while voting is OPEN.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1ProposalsById
+      x-operation-id-source: derived
+  /api/v1/proposals/{id}/results:
+    get:
+      summary: Get final results with on-chain anchors
+      tags:
+      - Proposals
+      description: Available once voting has closed and the tally is final (status TALLIED). For ON_CHAIN proposals includes the open/close anchor transaction hashes, the ballots Merkle root, and the canonical tally hash.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1ProposalsByIdResults
+      x-operation-id-source: derived
+  /api/v1/proposals/{id}/cancel:
+    post:
+      summary: Cancel a proposal
+      tags:
+      - Proposals
+      description: 'PENDING_REVIEW: withdrawn. OPEN: voting is terminated and the proposal is CANCELLED (ON_CHAIN proposals receive a termination close-anchor). Requires Idempotency-Key.'
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1ProposalsByIdCancel
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

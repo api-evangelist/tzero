@@ -1,0 +1,460 @@
+openapi: 3.2.0
+info:
+  title: Issuance & Secondary Markets Bank Accounts API
+  description: APIs to Create Individual broker dealer accounts, Trigger KYC on the investors in the account, Review account information and KYC results, View Primary offering that are available to invest and manage investments in the assets.
+servers:
+- url: https://gateway-web-api.tzero.com/app
+tags:
+- name: Bank Accounts
+  description: Managing bank accounts linked to an investor account (add, list, delete, verify).
+paths:
+  /pi/v1/accounts/{accountId}/bankAccounts:
+    post:
+      tags:
+      - Bank Accounts
+      summary: Add bank account
+      description: 'Adds a new bank account to the given account using directly provided bank details.
+
+        The bank account can be used as a funding source for ACH investments.'
+      operationId: addBankAccount
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+        example: PR-1234-5678
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBankAccountRequest'
+            example:
+              accountNumber: '123456789'
+              routingNumber: '021000021'
+              accountType: CHECKING
+              bankName: Chase
+              bankOwnerName: John Doe
+              transactionId: a0000000-0000-0000-0000-000000000010
+              partnerVerified: true
+              verificationResult: Verified via Plaid
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDetails'
+              example:
+                bankAccountId: ach-uuid-123
+                bankName: Chase
+                maskedAccountNumber: '6789'
+                accountType: CHECKING
+                status: PENDING
+                transactionId: a0000000-0000-0000-0000-000000000010
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Add bank account — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_NUMBER_REQUIRED | Account number is required. |
+
+            | ACCOUNT_NUMBER_INVALID | Account number must be 4 to 17 digits. |
+
+            | ROUTING_NUMBER_REQUIRED | Routing number is required. |
+
+            | ROUTING_NUMBER_INVALID | Routing number must be exactly 9 digits. |
+
+            | ACCOUNT_TYPE_INVALID | Account type must be CHECKING or SAVINGS. Accepts case-insensitive values (e.g. "checking", "CHECKING"). |
+
+            | BANK_NAME_REQUIRED | Bank name is required. |
+
+            | BANK_OWNER_NAME_REQUIRED | Bank owner name is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | PARTNER_VERIFICATION_REQUIRED | partnerVerified must be true. Partner must verify bank details before linking. |
+
+            | BANK_LINK_NOT_AVAILABLE | KYC not completed; complete KYC before adding a bank account. |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account not found)
+        '500':
+          description: Internal Server Error (INTERNAL_ERROR — unexpected error)
+        '502':
+          description: Bad Gateway (ach-service unavailable or returned an error)
+    get:
+      tags:
+      - Bank Accounts
+      summary: Get bank accounts
+      description: Retrieves all active bank accounts linked to the given account.
+      operationId: getBankAccounts
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+        example: PR-1234-5678
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountDetails'
+              example:
+              - bankAccountId: ach-uuid-123
+                bankName: Chase
+                maskedAccountNumber: '****6789'
+                accountType: CHECKING
+                status: APPROVED
+              - bankAccountId: ach-uuid-456
+                bankName: Bank of America
+                maskedAccountNumber: '****1234'
+                accountType: SAVINGS
+                status: PENDING
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account not found)
+        '500':
+          description: Internal Server Error (INTERNAL_ERROR — unexpected error)
+        '502':
+          description: Bad Gateway (ach-service unavailable or returned an error)
+  /pi/v1/accounts/{accountId}/bankAccounts/{bankAccountId}:
+    delete:
+      tags:
+      - Bank Accounts
+      summary: Remove bank account
+      description: 'Removes (soft-deletes) a bank account. The record is preserved for audit purposes
+
+        but will no longer appear in active account listings or be usable for new transactions.'
+      operationId: removeBankAccount
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+        example: PR-1234-5678
+      - name: bankAccountId
+        in: path
+        required: true
+        description: Bank account identifier.
+        schema:
+          type: string
+        example: ach-uuid-123
+      responses:
+        '204':
+          description: No Content (bank account successfully removed)
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account or bank account not found)
+        '500':
+          description: Internal Server Error (INTERNAL_ERROR — unexpected error)
+        '502':
+          description: Bad Gateway (ach-service unavailable or returned an error)
+  /pi/v1/accounts/{accountId}/bankAccounts/{bankAccountId}/transfer:
+    post:
+      tags:
+      - Bank Accounts
+      summary: Initiate Deposit/Withdrawal from/to the Customer's Account
+      description: Initiates a deposit or withdrawal transaction from User's linked bank account.
+      operationId: transfer
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+        example: PR-1234-5678
+      - name: bankAccountId
+        in: path
+        required: true
+        description: Bank account identifier.
+        schema:
+          type: string
+        example: ach-uuid-123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBankTransferRequest'
+            example:
+              transactionId: a0000000-0000-0000-0000-000000000010
+              amount: 10000
+              transactionType: DEPOSIT
+              currency: USD
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBankTransferResponse'
+              example:
+                transactionId: a0000000-0000-0000-0000-000000000010
+                amount: 10000
+                transferId: '6789'
+                bankAccountId: ach-uuid-123
+                transactionType: DEPOSIT
+                currency: USD
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Add bank account — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | TRANSACTION_TYPE | Transaction type is required. |
+
+            | AMOUNT_INVALID | Account is required and should be greater than 0 and less than 100K USD |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | BANK_NOT_AVAILABLE | Bank account is either unknown or pending approval |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account not found)
+        '500':
+          description: Internal Server Error (INTERNAL_ERROR — unexpected error)
+        '502':
+          description: Bad Gateway (service unavailable or returned an error)
+components:
+  schemas:
+    CreateBankTransferRequest:
+      type: object
+      description: Request body for initiating a bank transfer account.
+      required:
+      - transactionId
+      - amount
+      - transactionType
+      properties:
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        amount:
+          type: number
+          format: double
+        transactionType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          description: Bank transaction type associated to the request.
+        currency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - USD
+          example: USD
+    CreateBankTransferResponse:
+      type: object
+      description: Response object for bank transfer transaction.
+      required:
+      - transactionId
+      - transferId
+      - amount
+      - transactionType
+      - bankAccountId
+      properties:
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        transferId:
+          type: string
+          description: transferId associated to a transaction provided in response.
+          example: '1234'
+        amount:
+          type: number
+          format: double
+        transactionType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          description: Type of bank account.
+        bankAccountId:
+          type: string
+          description: Bank account linked to the transaction sent in the request.
+        currency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - USD
+          example: USD
+    BankAccountDetails:
+      type: object
+      properties:
+        bankAccountId:
+          type: string
+          description: Unique identifier for the linked bank account.
+        bankName:
+          type: string
+        maskedAccountNumber:
+          type:
+          - string
+          - 'null'
+          description: Last 4 digits of the account number.
+        accountType:
+          type: string
+          enum:
+          - CHECKING
+          - SAVINGS
+          description: Type of bank account. May be empty if account type is unknown.
+        status:
+          type: string
+          description: 'Bank account status: APPROVED, PENDING, DECLINED, or CANCELED.'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Client-provided transaction ID (only present on link response).
+    ErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
+        message:
+          type: string
+          description: Human-readable message.
+        field:
+          type:
+          - string
+          - 'null'
+          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
+        details:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
+
+            '
+    CreateBankAccountRequest:
+      type: object
+      description: Request body for linking a new bank account.
+      required:
+      - accountNumber
+      - routingNumber
+      - accountType
+      - bankName
+      - bankOwnerName
+      - transactionId
+      - partnerVerified
+      properties:
+        accountNumber:
+          type: string
+          pattern: ^\d{4,17}$
+          description: Full bank account number (4-17 digits).
+          example: '123456789'
+        routingNumber:
+          type: string
+          pattern: ^\d{9}$
+          description: Bank routing number — exactly 9 digits (ABA).
+        accountType:
+          type: string
+          enum:
+          - CHECKING
+          - SAVINGS
+          description: Type of bank account.
+        bankName:
+          type: string
+          description: Name of the bank.
+        bankOwnerName:
+          type: string
+          description: Name of the bank account owner.
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000010
+        partnerVerified:
+          type: boolean
+          description: Attestation that the partner has verified the bank account details. Must be true to proceed.
+          example: true
+        verificationResult:
+          type:
+          - string
+          - 'null'
+          description: Optional free-text field for audit trail describing how the bank details were verified.
+          example: Verified via Plaid
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+  securitySchemes:
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-apikey
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshToken:
+      type: refreshToken
+      in: header
+      name: refreshToken

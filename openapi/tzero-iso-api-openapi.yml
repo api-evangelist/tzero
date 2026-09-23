@@ -1,0 +1,70 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Iso API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Iso
+paths:
+  /api/v1/iso/fund-orders/subscriptions:
+    post:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Iso
+      summary: Create api iso fund orders subscriptions
+      x-summary-source: derived
+      operationId: postApiV1IsoFundOrdersSubscriptions
+      x-operation-id-source: derived
+  /api/v1/iso/fund-orders/redemptions:
+    post:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Iso
+      summary: Create api iso fund orders redemptions
+      x-summary-source: derived
+      operationId: postApiV1IsoFundOrdersRedemptions
+      x-operation-id-source: derived
+  /api/v1/iso/fund-orders/subscriptions/cancel:
+    post:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Iso
+      summary: Create api iso fund orders subscriptions cancel
+      x-summary-source: derived
+      operationId: postApiV1IsoFundOrdersSubscriptionsCancel
+      x-operation-id-source: derived
+  /api/v1/iso/fund-orders/redemptions/cancel:
+    post:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Iso
+      summary: Create api iso fund orders redemptions cancel
+      x-summary-source: derived
+      operationId: postApiV1IsoFundOrdersRedemptionsCancel
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

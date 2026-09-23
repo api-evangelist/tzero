@@ -1,0 +1,458 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Transfers API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Transfers
+  description: Book-entry transfer requests (secondary)
+paths:
+  /api/v1/transfers/:
+    get:
+      summary: List transfer requests
+      tags:
+      - Transfers
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          default: 1
+        in: query
+        name: page
+        required: false
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        in: query
+        name: perPage
+        required: false
+      - schema:
+          type: string
+          enum:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        in: query
+        name: status
+        required: false
+      - schema:
+          type: string
+        in: query
+        name: securityId
+        required: false
+      - schema:
+          type: string
+          format: date-time
+        in: query
+        name: fromDate
+        required: false
+      - schema:
+          type: string
+          format: date-time
+        in: query
+        name: toDate
+        required: false
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-14'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1Transfers
+      x-operation-id-source: derived
+    post:
+      summary: Submit transfer request
+      tags:
+      - Transfers
+      description: Submits a book-entry transfer from one investor to another. The transfer is queued as PENDING until approved by a TA admin. Supports an optional `idempotencyKey` to prevent duplicate submissions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fromInvestorId
+              - securityId
+              - quantity
+              properties:
+                fromInvestorId:
+                  type: string
+                toInvestorId:
+                  type: string
+                securityId:
+                  type: string
+                quantity:
+                  type: string
+                  description: Numeric string (integer or decimal)
+                price:
+                  type: string
+                  description: Optional price per unit as numeric string
+                idempotencyKey:
+                  type: string
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-14'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1Transfers
+      x-operation-id-source: derived
+  /api/v1/transfers/{id}:
+    get:
+      summary: Get transfer request
+      tags:
+      - Transfers
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-14'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1TransfersById
+      x-operation-id-source: derived
+  /api/v1/transfers/batch:
+    post:
+      summary: Batch submit transfer requests
+      tags:
+      - Transfers
+      description: Submit up to 500 transfer requests in a single call. Each item supports its own `idempotencyKey`. Returns individual results per item.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - idempotencyId
+              - transfers
+              properties:
+                idempotencyId:
+                  type: string
+                transfers:
+                  type: array
+                  minItems: 1
+                  maxItems: 500
+                  items:
+                    type: object
+                    required:
+                    - idempotencyId
+                    - fromInvestorId
+                    - securityId
+                    - quantity
+                    properties:
+                      idempotencyId:
+                        type: string
+                      fromInvestorId:
+                        type: string
+                      toInvestorId:
+                        type: string
+                      toInvestor:
+                        type: object
+                        required:
+                        - name
+                        - email
+                        properties:
+                          name:
+                            type: string
+                          email:
+                            type: string
+                            format: email
+                          entityType:
+                            type: string
+                          jurisdiction:
+                            type: string
+                      securityId:
+                        type: string
+                      quantity:
+                        type: string
+                      price:
+                        type: string
+                      matchedOn:
+                        type: string
+                        format: date-time
+                      settledOn:
+                        type: string
+                        format: date-time
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batchId:
+                    type: string
+                  submitted:
+                    type: integer
+                  duplicates:
+                    type: integer
+                  transfers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idempotencyId:
+                          type: string
+                        transferId:
+                          type: string
+                        status:
+                          type: string
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1TransfersBatch
+      x-operation-id-source: derived
+  /api/v1/transfers/{id}/status:
+    patch:
+      summary: Approve or reject transfer
+      tags:
+      - Transfers
+      description: Approve or reject a PENDING transfer request. Approval executes the balance change atomically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - action
+              properties:
+                action:
+                  type: string
+                  enum:
+                  - approve
+                  - reject
+                reviewNote:
+                  type: string
+                  maxLength: 2000
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-14'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: patchApiV1TransfersByIdStatus
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-14:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        payload:
+          type: object
+          description: The transfer details captured at submission time.
+          properties:
+            fromInvestorId:
+              type: string
+            toInvestorId:
+              type: string
+            securityId:
+              type: string
+            quantity:
+              type: string
+              description: Number of shares as numeric string
+            price:
+              type:
+              - string
+              - 'null'
+              description: Price per unit as numeric string
+            signature:
+              type:
+              - object
+              - 'null'
+              properties:
+                status:
+                  type: string
+                signature:
+                  type: string
+                date:
+                  type: string
+            idempotencyKey:
+              type:
+              - string
+              - 'null'
+            batchIdempotencyId:
+              type:
+              - string
+              - 'null'
+              description: Outer batch idempotency id (batch submissions only)
+            matchedOn:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            settledOn:
+              type:
+              - string
+              - 'null'
+              format: date-time
+          additionalProperties: true
+        requestedBy:
+          type: string
+        reviewedBy:
+          type:
+          - string
+          - 'null'
+        rejectionReason:
+          type:
+          - string
+          - 'null'
+        resolvedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      title: TransferRequest
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

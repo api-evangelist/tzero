@@ -1,0 +1,238 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Custody Accounts API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Custody Accounts
+paths:
+  /api/v1/custody-accounts/accounts:
+    get:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccounts
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/accounts/{accountId}:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts by account id
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccountsByAccountId
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/accounts/{accountId}/positions:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts by account id positions
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccountsByAccountIdPositions
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/accounts/{accountId}/deposit-addresses:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts by account id deposit addresses
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccountsByAccountIdDepositAddresses
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/accounts/{accountId}/transfers:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts by account id transfers
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccountsByAccountIdTransfers
+      x-operation-id-source: derived
+    post:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Create api custody accounts accounts by account id transfers
+      x-summary-source: derived
+      operationId: postApiV1CustodyAccountsAccountsByAccountIdTransfers
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/transfers/{transferId}:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: transferId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts transfers by transfer id
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsTransfersByTransferId
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/transfers/{transferId}/approvals:
+    post:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: transferId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Create api custody accounts transfers by transfer id approvals
+      x-summary-source: derived
+      operationId: postApiV1CustodyAccountsTransfersByTransferIdApprovals
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/accounts/{accountId}/whitelist:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: accountId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts accounts by account id whitelist
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsAccountsByAccountIdWhitelist
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/webhooks:
+    get:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts webhooks
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsWebhooks
+      x-operation-id-source: derived
+    post:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Create api custody accounts webhooks
+      x-summary-source: derived
+      operationId: postApiV1CustodyAccountsWebhooks
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/webhooks/{id}:
+    delete:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Delete api custody accounts webhooks by id
+      x-summary-source: derived
+      operationId: deleteApiV1CustodyAccountsWebhooksById
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/events:
+    get:
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Get api custody accounts events
+      x-summary-source: derived
+      operationId: getApiV1CustodyAccountsEvents
+      x-operation-id-source: derived
+  /api/v1/custody-accounts/events/{id}/replay:
+    post:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Custody Accounts
+      summary: Create api custody accounts events by id replay
+      x-summary-source: derived
+      operationId: postApiV1CustodyAccountsEventsByIdReplay
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

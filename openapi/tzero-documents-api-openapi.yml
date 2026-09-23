@@ -1,0 +1,422 @@
+openapi: 3.2.0
+info:
+  title: Tzero Documents API
+  version: '1.0'
+  description: 'Operations tagged Documents across 2 of this provider''s published API definitions: tzero-institutional-openapi.json, tzero-issuance-secondary-markets-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.t0direct.com
+  description: Production
+- url: https://gateway-web-api.tzero.com/app
+tags:
+- name: Documents
+  description: Investor document upload and retrieval
+paths:
+  /api/v1/documents/:
+    get:
+      summary: List documents
+      tags:
+      - Documents
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+        in: query
+        name: page
+        required: false
+      - schema:
+          type: integer
+          default: 20
+          maximum: 100
+        in: query
+        name: perPage
+        required: false
+      - schema:
+          type: string
+        in: query
+        name: investorId
+        required: false
+      - schema:
+          type: string
+        in: query
+        name: documentType
+        required: false
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-16'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+      security:
+      - ApiKeyAuth: []
+      operationId: getApiV1Documents
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.t0direct.com
+      description: Production
+  /api/v1/documents/{id}:
+    get:
+      summary: Get document
+      tags:
+      - Documents
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-16'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      security:
+      - ApiKeyAuth: []
+      operationId: getApiV1DocumentsById
+      x-operation-id-source: derived
+    delete:
+      summary: Delete document
+      tags:
+      - Documents
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '204':
+          description: No content
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      security:
+      - ApiKeyAuth: []
+      operationId: deleteApiV1DocumentsById
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.t0direct.com
+      description: Production
+  /api/v1/documents/{id}/download:
+    get:
+      summary: Get short-lived download URL
+      tags:
+      - Documents
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      operationId: getApiV1DocumentsByIdDownload
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.t0direct.com
+      description: Production
+  /api/v1/documents/upload-url:
+    post:
+      summary: Request document upload URL
+      tags:
+      - Documents
+      description: Generates a v4-signed PUT URL bound to the per-issuer Cloud HSM key and returns a confirmation token. The URL is valid for 15 minutes; the client uploads the file directly to GCS, then calls PUT /upload/:uploadToken to finalize.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - investorId
+              - documentType
+              - fileName
+              - mimeType
+              - fileSize
+              properties:
+                investorId:
+                  type: string
+                documentType:
+                  type: string
+                  enum:
+                  - KYC_ID
+                  - ACCREDITATION
+                  - SUBSCRIPTION_AGREEMENT
+                  - TAX_FORM
+                  - OTHER
+                fileName:
+                  type: string
+                mimeType:
+                  type: string
+                fileSize:
+                  type: integer
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      documentId:
+                        type: string
+                      uploadUrl:
+                        type: string
+                      uploadToken:
+                        type: string
+                      expiresAt:
+                        type: string
+                        format: date-time
+                      requiredHeaders:
+                        type: object
+                        additionalProperties: true
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '503':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      security:
+      - ApiKeyAuth: []
+      operationId: postApiV1DocumentsUploadUrl
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.t0direct.com
+      description: Production
+  /api/v1/documents/upload/{uploadToken}:
+    put:
+      summary: Confirm document upload
+      tags:
+      - Documents
+      description: Confirms a document upload. The body is empty in Phase 2 — the API constructs the storage path internally and verifies the object exists at the expected GCS key. Idempotent.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: uploadToken
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-16'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '410':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      security:
+      - ApiKeyAuth: []
+      operationId: putApiV1DocumentsUploadByUploadToken
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.t0direct.com
+      description: Production
+  /pi/v1/docs/assets/{assetId}/accounts/{accountId}/wire-instructions:
+    get:
+      tags:
+      - Documents
+      summary: Download wire instructions
+      description: 'Wire instructions to fund an account for a specific investment in an asset.
+
+        The query parameter `investmentId` is required.'
+      operationId: getWireInstructions
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: Asset identifier.
+        schema:
+          type: string
+          example: '39737'
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+          example: PR-1234-5678
+      - name: investmentId
+        in: query
+        required: true
+        description: Investment identifier.
+        schema:
+          type: string
+          example: U7F7D95Y
+      responses:
+        '200':
+          description: Wire instructions document successfully retrieved.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Wire instructions not found
+        '500':
+          description: Internal Server Error
+    servers:
+    - url: https://gateway-web-api.tzero.com/app
+components:
+  schemas:
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-16:
+      type: object
+      properties:
+        id:
+          type: string
+        investorId:
+          type: string
+        investorName:
+          type:
+          - string
+          - 'null'
+          description: Name of the owning investor
+        documentType:
+          type: string
+        fileName:
+          type:
+          - string
+          - 'null'
+          description: Sanitized original filename
+        fileSize:
+          type:
+          - integer
+          - 'null'
+          description: File size in bytes
+        status:
+          type:
+          - string
+          - 'null'
+          description: 'Upload status (lowercased): pending / confirmed / rejected'
+        uploadedBy:
+          type:
+          - string
+          - 'null'
+          description: Identity that initiated the upload
+        label:
+          type:
+          - string
+          - 'null'
+        storageUrl:
+          type:
+          - string
+          - 'null'
+        mimeType:
+          type:
+          - string
+          - 'null'
+        sizeBytes:
+          type:
+          - integer
+          - 'null'
+        createdAt:
+          type: string
+          format: date-time
+      title: Document
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-apikey
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshToken:
+      type: refreshToken
+      in: header
+      name: refreshToken
+x-refined-from:
+- tzero-institutional-openapi.json
+- tzero-issuance-secondary-markets-openapi.json

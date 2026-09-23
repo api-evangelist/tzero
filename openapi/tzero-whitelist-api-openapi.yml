@@ -1,0 +1,201 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Whitelist API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Whitelist
+  description: Approved external addresses for custody transfers
+paths:
+  /api/v1/custody/whitelist:
+    get:
+      summary: List whitelisted addresses
+      tags:
+      - Whitelist
+      description: Returns the external addresses whitelisted by the authenticated issuer, with their assets.
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+          minimum: 1
+        in: query
+        name: page
+        required: false
+      - schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 200
+        in: query
+        name: perPage
+        required: false
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-9'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1CustodyWhitelist
+      x-operation-id-source: derived
+  /api/v1/custody/whitelist/{id}:
+    get:
+      summary: Get whitelisted address
+      tags:
+      - Whitelist
+      description: Returns a single whitelisted address (with assets) owned by the authenticated issuer.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Whitelisted address ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-9'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1CustodyWhitelistById
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-8:
+      type: object
+      properties:
+        id:
+          type: string
+        assetId:
+          type: string
+        address:
+          type: string
+        tag:
+          type:
+          - string
+          - 'null'
+      title: WhitelistedAddressAsset
+    def-9:
+      type: object
+      description: An external address approved to receive transfers from custody.
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          description: EXTERNAL / INTERNAL / CONTRACT
+        name:
+          type: string
+        status:
+          type: string
+          example: ACTIVE
+        fireblocksWalletId:
+          type: string
+        approvedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        revokedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/def-8'
+      title: WhitelistedAddress
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

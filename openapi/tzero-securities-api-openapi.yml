@@ -1,0 +1,426 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Securities API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Securities
+  description: Security and instrument definitions
+paths:
+  /api/v1/securities/:
+    get:
+      summary: List securities
+      tags:
+      - Securities
+      description: Returns a paginated list of securities for the authenticated issuer.
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+          minimum: 1
+        in: query
+        name: page
+        required: false
+        description: Page number
+      - schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 200
+        in: query
+        name: perPage
+        required: false
+        description: Results per page
+      - schema:
+          type: string
+        in: query
+        name: status
+        required: false
+        description: Filter by security status
+      - schema:
+          type: string
+        in: query
+        name: type
+        required: false
+        description: Filter by security type
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-12'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1Securities
+      x-operation-id-source: derived
+  /api/v1/securities/{id}:
+    get:
+      summary: Get security
+      tags:
+      - Securities
+      description: Returns a single security by ID, including the top 10 holders.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Security ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-12'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1SecuritiesById
+      x-operation-id-source: derived
+  /api/v1/securities/{id}/captable:
+    get:
+      summary: Get cap table
+      tags:
+      - Securities
+      description: Returns paginated list of all shareholders for this security, ordered by shares descending.
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+          minimum: 1
+        in: query
+        name: page
+        required: false
+        description: Page number
+      - schema:
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 500
+        in: query
+        name: perPage
+        required: false
+        description: Results per page
+      - schema:
+          type: boolean
+          default: true
+        in: query
+        name: minBalance
+        required: false
+        description: When true (default), excludes holders with a zero balance
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Security ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-13'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+                  totalShares:
+                    type:
+                    - string
+                    - 'null'
+                    description: Total shares outstanding for this security
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1SecuritiesByIdCaptable
+      x-operation-id-source: derived
+  /api/v1/securities/{id}/holders:
+    get:
+      summary: List security holders
+      tags:
+      - Securities
+      description: Alias for GET /:id/captable. Returns the same paginated shareholder list.
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+          minimum: 1
+        in: query
+        name: page
+        required: false
+        description: Page number
+      - schema:
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 500
+        in: query
+        name: perPage
+        required: false
+        description: Results per page
+      - schema:
+          type: boolean
+          default: true
+        in: query
+        name: minBalance
+        required: false
+        description: When true (default), excludes holders with a zero balance
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Security ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-13'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+                  totalShares:
+                    type:
+                    - string
+                    - 'null'
+                    description: Total shares outstanding for this security
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1SecuritiesByIdHolders
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-12:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type:
+          - string
+          - 'null'
+        type:
+          type: string
+        status:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        totalShares:
+          type:
+          - string
+          - 'null'
+          description: Total authorized shares (integer as string)
+        sharesOutstanding:
+          type:
+          - string
+          - 'null'
+        parValue:
+          type:
+          - string
+          - 'null'
+        cusip:
+          type:
+          - string
+          - 'null'
+        isin:
+          type:
+          - string
+          - 'null'
+        regType:
+          type:
+          - string
+          - 'null'
+          description: Regulatory exemption type (e.g. REG_D_506C)
+        contractAddress:
+          type:
+          - string
+          - 'null'
+          description: On-chain token contract address
+        chain:
+          type:
+          - string
+          - 'null'
+          description: Chain the token contract lives on
+        dividendRate:
+          type:
+          - number
+          - 'null'
+          description: Annual dividend rate %
+        liquidationPref:
+          type:
+          - number
+          - 'null'
+          description: Liquidation preference multiplier
+        holders:
+          type: array
+          items:
+            $ref: '#/components/schemas/def-13'
+          description: Top 10 holders — present on the detail endpoint only
+        createdAt:
+          type: string
+          format: date-time
+      title: Security
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-13:
+      type: object
+      properties:
+        rank:
+          type: integer
+        walletAddress:
+          type:
+          - string
+          - 'null'
+          description: On-chain holder wallet address
+        investorId:
+          type:
+          - string
+          - 'null'
+        investorName:
+          type:
+          - string
+          - 'null'
+        shares:
+          type: string
+          description: Shares held (integer as string)
+        percentage:
+          type:
+          - string
+          - 'null'
+          description: Percentage of shares outstanding
+        lastSyncAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last chain-sync timestamp
+      title: SecurityHolder
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

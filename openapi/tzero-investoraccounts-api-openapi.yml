@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Investor Accounts API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: InvestorAccounts
+paths:
+  /api/v1/investor-accounts/:
+    get:
+      summary: List investor accounts
+      tags:
+      - InvestorAccounts
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1InvestorAccounts
+      x-operation-id-source: derived
+    post:
+      summary: Create investor account (omnibus parent or sub-account)
+      tags:
+      - InvestorAccounts
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1InvestorAccounts
+      x-operation-id-source: derived
+  /api/v1/investor-accounts/{id}/reconcile:
+    post:
+      summary: Run omnibus reconciliation snapshot (parent vs Σ(children))
+      tags:
+      - InvestorAccounts
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1InvestorAccountsByIdReconcile
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

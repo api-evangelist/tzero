@@ -1,0 +1,59 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Subred API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Subred
+paths:
+  /api/v1/subred/embed/securities/{securityId}/election:
+    get:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: securityId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Subred
+      summary: Get api subred embed securities by security id election
+      x-summary-source: derived
+      operationId: getApiV1SubredEmbedSecuritiesBySecurityIdElection
+      x-operation-id-source: derived
+    put:
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: securityId
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      tags:
+      - Subred
+      summary: Replace api subred embed securities by security id election
+      x-summary-source: derived
+      operationId: putApiV1SubredEmbedSecuritiesBySecurityIdElection
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

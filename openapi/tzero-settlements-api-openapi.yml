@@ -1,0 +1,160 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Settlements API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Settlements
+paths:
+  /api/v1/settlements/:
+    get:
+      summary: List settlement instructions
+      tags:
+      - Settlements
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1Settlements
+      x-operation-id-source: derived
+    post:
+      summary: Submit settlement instruction
+      tags:
+      - Settlements
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1Settlements
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}:
+    get:
+      summary: Get settlement instruction
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SettlementsById
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}/approve:
+    post:
+      summary: Approve settlement instruction
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SettlementsByIdApprove
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}/reject:
+    post:
+      summary: Reject settlement instruction
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SettlementsByIdReject
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}/cancel:
+    post:
+      summary: Cancel settlement instruction
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SettlementsByIdCancel
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}/execute:
+    post:
+      summary: Manually execute approved settlement
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SettlementsByIdExecute
+      x-operation-id-source: derived
+  /api/v1/settlements/{id}/reverse:
+    post:
+      summary: Create reversal of an executed settlement
+      tags:
+      - Settlements
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1SettlementsByIdReverse
+      x-operation-id-source: derived
+  /api/v1/settlements/configs:
+    get:
+      summary: List settlement configs (issuer + per-security)
+      tags:
+      - Settlements
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1SettlementsConfigs
+      x-operation-id-source: derived
+    put:
+      summary: Upsert settlement config (issuer default or per-security override)
+      tags:
+      - Settlements
+      responses:
+        '200':
+          description: Default Response
+      operationId: putApiV1SettlementsConfigs
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

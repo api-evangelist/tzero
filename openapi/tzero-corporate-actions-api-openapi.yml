@@ -1,0 +1,80 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Corporate Actions API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Corporate Actions
+  description: Splits, mergers and other corporate actions — review-gated; on-chain splits broadcast via Fireblocks
+paths:
+  /api/v1/corporate-actions/:
+    get:
+      summary: List corporate actions
+      tags:
+      - Corporate Actions
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1CorporateActions
+      x-operation-id-source: derived
+    post:
+      summary: Declare a corporate action (enters tZERO review)
+      tags:
+      - Corporate Actions
+      description: Creates the action in PENDING_REVIEW under a Rule 17Ad-2 SLA timer. Status changes via ta.corporate_action.* webhooks. Requires Idempotency-Key.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1CorporateActions
+      x-operation-id-source: derived
+  /api/v1/corporate-actions/{id}:
+    get:
+      summary: Get a corporate action
+      tags:
+      - Corporate Actions
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1CorporateActionsById
+      x-operation-id-source: derived
+  /api/v1/corporate-actions/{id}/cancel:
+    post:
+      summary: Cancel a corporate action
+      tags:
+      - Corporate Actions
+      description: 'PENDING_REVIEW: withdrawn. ANNOUNCED (not executed): cancelled. Later states are transfer-agent operations. Requires Idempotency-Key.'
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1CorporateActionsByIdCancel
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

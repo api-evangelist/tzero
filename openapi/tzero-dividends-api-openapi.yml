@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Dividends API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Dividends
+  description: Dividend declarations (cash & stock) — review-gated; on-chain execution via the dividend claim contract
+paths:
+  /api/v1/dividends/:
+    get:
+      summary: List dividends
+      tags:
+      - Dividends
+      description: All dividends for the issuer bound to the API key, newest first.
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1Dividends
+      x-operation-id-source: derived
+    post:
+      summary: Declare a dividend (enters tZERO review)
+      tags:
+      - Dividends
+      description: Creates the dividend in PENDING_REVIEW. A tZERO transfer-agent reviewer approves or rejects it under a Rule 17Ad-2 SLA timer; status changes are delivered via ta.dividend.* webhooks. Requires an Idempotency-Key header.
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1Dividends
+      x-operation-id-source: derived
+  /api/v1/dividends/{id}:
+    get:
+      summary: Get a dividend with payment rollups
+      tags:
+      - Dividends
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1DividendsById
+      x-operation-id-source: derived
+  /api/v1/dividends/{id}/funding:
+    get:
+      summary: Get USDC funding deposit instructions for a CASH dividend
+      tags:
+      - Dividends
+      description: After a CASH dividend is approved and frozen, returns where and how much USDC to deposit. `requiredBaseUnits` is the ON-CHAIN cash the pool needs — it EXCLUDES holders who elected reinvestment (DRIP, retained by the fund) or off-chain clearing, so it can be less than the declared total. Fund this exact amount to the deposit address; overfunding is held as a refund.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1DividendsByIdFunding
+      x-operation-id-source: derived
+  /api/v1/dividends/{id}/reconciliation:
+    get:
+      summary: 'Reconcile a dividend: declared vs distributed'
+      tags:
+      - Dividends
+      description: Proves every declared base unit is accounted for across payout modes (USDC paid, reinvested cost, reinvest residual, clearing-settled), with no drift and no open/failed entitlements. `reconciled:true` means the dividend is fully and correctly distributed.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1DividendsByIdReconciliation
+      x-operation-id-source: derived
+  /api/v1/dividends/payment-tokens:
+    get:
+      summary: List approved payment tokens for a security
+      tags:
+      - Dividends
+      description: The allowlisted tokens (per the USDC-only policy) accepted as dividendTokenAddress for on-chain CASH dividends on the security's chain and network.
+      responses:
+        '200':
+          description: Default Response
+      operationId: getApiV1DividendsPaymentTokens
+      x-operation-id-source: derived
+  /api/v1/dividends/{id}/cancel:
+    post:
+      summary: Cancel a dividend
+      tags:
+      - Dividends
+      description: 'PENDING_REVIEW: withdrawn before review. DECLARED (not yet executed): cancelled. Executed on-chain dividends must be cancelled by the transfer agent (claim-contract cancellation) — contact tZERO. Requires Idempotency-Key.'
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+      operationId: postApiV1DividendsByIdCancel
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

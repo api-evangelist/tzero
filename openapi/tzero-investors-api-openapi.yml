@@ -1,0 +1,601 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Investors API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Investors
+  description: Investor KYC, accreditation, and holdings management
+paths:
+  /api/v1/investors/:
+    get:
+      summary: List investors
+      tags:
+      - Investors
+      description: Returns a paginated list of investors for the authenticated issuer.
+      parameters:
+      - schema:
+          type: integer
+          default: 1
+          minimum: 1
+        in: query
+        name: page
+        required: false
+        description: Page number
+      - schema:
+          type: integer
+          default: 50
+          minimum: 1
+          maximum: 200
+        in: query
+        name: perPage
+        required: false
+        description: Results per page
+      - schema:
+          type: string
+          enum:
+          - NOT_STARTED
+          - PENDING
+          - APPROVED
+          - REJECTED
+          - EXPIRED
+        in: query
+        name: kycStatus
+        required: false
+        description: Filter by KYC status
+      - schema:
+          type: string
+          enum:
+          - NONE
+          - PENDING
+          - VERIFIED
+          - EXPIRED
+        in: query
+        name: accreditationStatus
+        required: false
+        description: Filter by accreditation status
+      - schema:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - CORPORATION
+          - LLC
+          - PARTNERSHIP
+          - TRUST
+          - FUND
+          - DAO
+          - OTHER
+        in: query
+        name: entityType
+        required: false
+        description: Filter by entity type
+      - schema:
+          type: string
+        in: query
+        name: search
+        required: false
+        description: Search by name or email
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-10'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1Investors
+      x-operation-id-source: derived
+    post:
+      summary: Create investor
+      tags:
+      - Investors
+      description: Creates a new investor record for the authenticated issuer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  description: Investor full name or entity name
+                email:
+                  type:
+                  - string
+                  - 'null'
+                  format: email
+                  description: Contact email address
+                entityType:
+                  type: string
+                  enum:
+                  - INDIVIDUAL
+                  - CORPORATION
+                  - LLC
+                  - PARTNERSHIP
+                  - TRUST
+                  - FUND
+                  - DAO
+                  - OTHER
+                  default: INDIVIDUAL
+                  description: Legal entity type
+                jurisdiction:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 100
+                  description: Country or state of jurisdiction
+                taxId:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 100
+                  description: Tax identification number (EIN, SSN, etc.)
+                walletAddress:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 200
+                  description: Blockchain wallet address
+                sharesOwned:
+                  type: string
+                  pattern: ^\d+$
+                  description: Total shares owned — non-negative integer as string
+                kycStatus:
+                  type: string
+                  enum:
+                  - NOT_STARTED
+                  - PENDING
+                  - APPROVED
+                  - REJECTED
+                  - EXPIRED
+                  default: NOT_STARTED
+                  description: KYC verification status
+                accreditationStatus:
+                  type: string
+                  enum:
+                  - NONE
+                  - PENDING
+                  - VERIFIED
+                  - EXPIRED
+                  default: NONE
+                  description: Investor accreditation status
+                notes:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 5000
+                  description: Internal notes
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-10'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '500':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1Investors
+      x-operation-id-source: derived
+  /api/v1/investors/{id}:
+    get:
+      summary: Get investor
+      tags:
+      - Investors
+      description: Returns a single investor by ID for the authenticated issuer.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Investor ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-10'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1InvestorsById
+      x-operation-id-source: derived
+    patch:
+      summary: Update investor
+      tags:
+      - Investors
+      description: Partially updates an investor record. All body fields are optional.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kycStatus:
+                  type: string
+                  enum:
+                  - NOT_STARTED
+                  - PENDING
+                  - APPROVED
+                  - REJECTED
+                  - EXPIRED
+                  description: KYC verification status
+                kycVerifiedAt:
+                  type:
+                  - string
+                  - 'null'
+                  format: date-time
+                  description: Date KYC was verified
+                kycExpiresAt:
+                  type:
+                  - string
+                  - 'null'
+                  format: date-time
+                  description: Date KYC expires
+                accreditationStatus:
+                  type: string
+                  enum:
+                  - NONE
+                  - PENDING
+                  - VERIFIED
+                  - EXPIRED
+                  description: Investor accreditation status
+                accreditationVerifiedAt:
+                  type:
+                  - string
+                  - 'null'
+                  format: date-time
+                  description: Date accreditation was verified
+                accreditationExpiresAt:
+                  type:
+                  - string
+                  - 'null'
+                  format: date-time
+                  description: Date accreditation expires
+                walletAddress:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 200
+                  description: Blockchain wallet address
+                sharesOwned:
+                  type: string
+                  pattern: ^\d+$
+                  description: Total shares owned — non-negative integer as string
+                notes:
+                  type:
+                  - string
+                  - 'null'
+                  maxLength: 5000
+                  description: Internal notes
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Investor ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-10'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: patchApiV1InvestorsById
+      x-operation-id-source: derived
+  /api/v1/investors/{id}/holdings:
+    get:
+      summary: Get investor holdings
+      tags:
+      - Investors
+      description: Returns all security holdings for a single investor.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+        description: Investor ID
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-11'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '403':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1InvestorsByIdHoldings
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-11:
+      type: object
+      properties:
+        securityId:
+          type:
+          - string
+          - 'null'
+        securityName:
+          type:
+          - string
+          - 'null'
+        securityType:
+          type:
+          - string
+          - 'null'
+          description: Security type (e.g. COMMON_STOCK)
+        symbol:
+          type:
+          - string
+          - 'null'
+          description: Security ticker symbol
+        shares:
+          type: string
+          description: Integer as string
+        percentage:
+          type:
+          - string
+          - 'null'
+          description: Percentage of shares outstanding
+        lastSyncAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last chain-sync timestamp
+      title: InvestorHolding
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-10:
+      type: object
+      properties:
+        id:
+          type: string
+          description: CUID
+        name:
+          type: string
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+        entityType:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - CORPORATION
+          - LLC
+          - PARTNERSHIP
+          - TRUST
+          - FUND
+          - DAO
+          - OTHER
+        jurisdiction:
+          type:
+          - string
+          - 'null'
+        taxId:
+          type:
+          - string
+          - 'null'
+        walletAddress:
+          type:
+          - string
+          - 'null'
+        sharesOwned:
+          type: string
+          description: Integer as string
+        ownershipPct:
+          type:
+          - string
+          - 'null'
+        kycStatus:
+          type: string
+          enum:
+          - NOT_STARTED
+          - PENDING
+          - APPROVED
+          - REJECTED
+          - EXPIRED
+        kycVerifiedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        kycExpiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        kybStatus:
+          type:
+          - string
+          - 'null'
+        accreditationStatus:
+          type: string
+          enum:
+          - NONE
+          - PENDING
+          - VERIFIED
+          - EXPIRED
+        accreditationVerifiedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        accreditationExpiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        hasPortalAccount:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      title: Investor
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

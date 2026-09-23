@@ -1,0 +1,409 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Issuances API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Issuances
+  description: Primary share issuance requests
+paths:
+  /api/v1/issuances/:
+    get:
+      summary: List issuance requests
+      tags:
+      - Issuances
+      parameters:
+      - schema:
+          type: integer
+          minimum: 1
+          default: 1
+        in: query
+        name: page
+        required: false
+      - schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        in: query
+        name: perPage
+        required: false
+      - schema:
+          type: string
+          enum:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        in: query
+        name: status
+        required: false
+      - schema:
+          type: string
+        in: query
+        name: securityId
+        required: false
+      - schema:
+          type: string
+        in: query
+        name: investorId
+        required: false
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-15'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1Issuances
+      x-operation-id-source: derived
+    post:
+      summary: Submit issuance request
+      tags:
+      - Issuances
+      description: Queues a primary share issuance request for approval. Equivalent to Vertalo's TaRequest. The issuance is PENDING until a TA admin approves it, at which point shares are credited to the investor.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - investorId
+              - securityId
+              - quantity
+              properties:
+                investorId:
+                  type: string
+                securityId:
+                  type: string
+                quantity:
+                  type: string
+                  description: Number of shares as numeric string
+                costBasis:
+                  type: string
+                  description: Cost basis as numeric string
+                issuanceDate:
+                  type: string
+                  format: date-time
+                idempotencyKey:
+                  type: string
+                notes:
+                  type: string
+                  maxLength: 2000
+                recipientType:
+                  type: string
+                  enum:
+                  - PRIMARY_OFFERING
+                  - EMPLOYEE_GRANT
+                  - VENDOR_PAYMENT
+                  - CONSULTANT_GRANT
+                  - BOARD_COMPENSATION
+                  - CONVERSION
+                  - OTHER
+                  description: Why this issuance is being submitted — primary offering vs. employee/vendor/consultant grant, etc. Defaults to PRIMARY_OFFERING when omitted.
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-15'
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1Issuances
+      x-operation-id-source: derived
+  /api/v1/issuances/{id}:
+    get:
+      summary: Get issuance request
+      tags:
+      - Issuances
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-15'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1IssuancesById
+      x-operation-id-source: derived
+  /api/v1/issuances/{id}/approve:
+    post:
+      summary: Approve issuance request
+      tags:
+      - Issuances
+      description: Approves a PENDING issuance request and executes the share credit to the investor's balance atomically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reviewNote:
+                  type: string
+                  maxLength: 2000
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-15'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1IssuancesByIdApprove
+      x-operation-id-source: derived
+  /api/v1/issuances/{id}/reject:
+    post:
+      summary: Reject issuance request
+      tags:
+      - Issuances
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rejectionReason:
+                  type: string
+                  maxLength: 2000
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-15'
+        '401':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1IssuancesByIdReject
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-15:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - PENDING
+          - APPROVED
+          - REJECTED
+        payload:
+          type: object
+          description: The issuance request details captured at submission time.
+          properties:
+            investorId:
+              type: string
+            securityId:
+              type: string
+            quantity:
+              type: string
+              description: Number of shares as numeric string
+            issuanceDate:
+              type: string
+              description: Issuance date (ISO date or date-time)
+            recipientType:
+              type: string
+              description: Why the issuance was submitted (e.g. PRIMARY_OFFERING)
+            costBasis:
+              type:
+              - string
+              - 'null'
+              description: Cost basis as numeric string
+            notes:
+              type:
+              - string
+              - 'null'
+            idempotencyKey:
+              type:
+              - string
+              - 'null'
+          additionalProperties: true
+        securityId:
+          type: string
+        investorId:
+          type: string
+        shares:
+          type: string
+        pricePerShare:
+          type:
+          - string
+          - 'null'
+        consideration:
+          type:
+          - string
+          - 'null'
+        memo:
+          type:
+          - string
+          - 'null'
+        idempotencyKey:
+          type:
+          - string
+          - 'null'
+        metadata:
+          type:
+          - object
+          - 'null'
+        requestedBy:
+          type: string
+        reviewedBy:
+          type:
+          - string
+          - 'null'
+        rejectionReason:
+          type:
+          - string
+          - 'null'
+        resolvedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        webhookId:
+          type:
+          - string
+          - 'null'
+          description: Correlation id echoed on submission responses — matches the issuanceId in ta.issuance.* webhook events
+      title: IssuanceRequest
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

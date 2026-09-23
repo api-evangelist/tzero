@@ -1,0 +1,292 @@
+openapi: 3.2.0
+info:
+  title: tZERO Institutional API Documents Webhooks API
+  description: '## Overview
+
+
+    The **tZERO Institutional API** — programmatic access to transfer-agent, tokenization, and custody operations for institutional issuers and partners.'
+  version: 1.1.0
+  contact:
+    name: T0kenizer API Support
+    email: api@t0direct.com
+servers:
+- url: https://api.t0direct.com
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Webhooks
+  description: Webhook subscription management and event delivery
+paths:
+  /api/v1/webhooks/events:
+    get:
+      summary: List available webhook events
+      tags:
+      - Webhooks
+      description: Returns all webhook event types that can be subscribed to. No authentication required.
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: string
+      operationId: getApiV1WebhooksEvents
+      x-operation-id-source: derived
+  /api/v1/webhooks/:
+    get:
+      summary: List webhook subscriptions
+      tags:
+      - Webhooks
+      parameters:
+      - schema:
+          type: integer
+        in: query
+        name: page
+        required: false
+      - schema:
+          type: integer
+        in: query
+        name: perPage
+        required: false
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/def-17'
+                  pagination:
+                    $ref: '#/components/schemas/def-0'
+        '500':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: getApiV1Webhooks
+      x-operation-id-source: derived
+    post:
+      summary: Create webhook subscription
+      tags:
+      - Webhooks
+      description: Creates a new webhook subscription. A secret is auto-generated if not provided. The secret is returned ONCE on creation — store it securely. Use it to verify incoming webhook signatures (HMAC-SHA256).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - url
+              - events
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: Must be an HTTPS URL
+                events:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                secret:
+                  type: string
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                    - $ref: '#/components/schemas/def-17'
+                    - type: object
+                      properties:
+                        secret:
+                          type: string
+                        _note:
+                          type: string
+        '400':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1Webhooks
+      x-operation-id-source: derived
+  /api/v1/webhooks/{id}:
+    patch:
+      summary: Update webhook subscription
+      tags:
+      - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                events:
+                  type: array
+                  items:
+                    type: string
+                isActive:
+                  type: boolean
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/def-17'
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: patchApiV1WebhooksById
+      x-operation-id-source: derived
+    delete:
+      summary: Delete webhook subscription
+      tags:
+      - Webhooks
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '204':
+          description: No content
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: deleteApiV1WebhooksById
+      x-operation-id-source: derived
+  /api/v1/webhooks/{id}/test:
+    post:
+      summary: Send test webhook event
+      tags:
+      - Webhooks
+      description: Queues a `ta.test` event for delivery to the subscription's URL to verify the endpoint is reachable and the signature verification logic is correct. Delivery is asynchronous (fire-and-forget) — the response confirms the event was queued, not that the remote endpoint accepted it.
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: id
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Test event queued for delivery
+                      event:
+                        type: string
+                        example: ta.test
+        '404':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/def-1'
+      operationId: postApiV1WebhooksByIdTest
+      x-operation-id-source: derived
+components:
+  schemas:
+    def-17:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      title: WebhookSubscription
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key generated at app.t0kenizer.com/ta/api-keys

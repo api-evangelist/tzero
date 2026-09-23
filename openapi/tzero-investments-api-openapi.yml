@@ -1,0 +1,1106 @@
+openapi: 3.2.0
+info:
+  title: Issuance & Secondary Markets Investments API
+  description: APIs to Create Individual broker dealer accounts, Trigger KYC on the investors in the account, Review account information and KYC results, View Primary offering that are available to invest and manage investments in the assets.
+servers:
+- url: https://gateway-web-api.tzero.com/app
+tags:
+- name: Investments
+  description: Investments and assets (create, update, submit, cancel, agreements).
+paths:
+  /pi/v1/assets:
+    get:
+      tags:
+      - Investments
+      summary: Get assets
+      description: Returns list of available assets.
+      security:
+      - x-api-key: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetsResponse'
+              examples:
+                success:
+                  summary: Example response
+                  value:
+                    assets:
+                    - assetId: '39737'
+                      symbol: AF
+                      assetName: Abstract Face
+                      assetDescription: ''
+                      assetType:
+                        code: COMMON_STOCK
+                        label: Common Stock
+                        description: Common Stock.
+                      requiresAccreditation: false
+                      pricePerShare: 10
+                      minimumInvestment: 50
+                      maximumInvestment: 100000
+                      status: OPEN
+                      offeringCloseDate: '2026-06-30T23:59:59-04:00'
+                      offering:
+                        code: REG_D_506C
+                        label: Reg D 506 (c)
+                        description: Reg D 506 (c) offering.
+                      countries:
+                      - US
+                      paymentTypes:
+                      - code: WIRE
+                        label: WIRE
+                        description: Wire Transfer.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      operationId: getPiV1Assets
+      x-operation-id-source: derived
+  /pi/v1/assets/{assetId}/investments:
+    post:
+      tags:
+      - Investments
+      summary: Create investment
+      description: 'Create a new investment for an asset.
+
+
+        `numberOfShares` is optional; when it is not provided investment `amount`
+
+        is used to compute the `numberOfShares`. If the shares cannot be computed or If fractional shares is not supported , the request gets rejected with `INVALID_AMOUNT_AND_SHARES`.
+
+
+        For Reg CF assets, regCFInvestmentTermsAccepted must be true.
+
+        Annual income and net worth are required for Reg A and Reg CF.'
+      operationId: createInvestment
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: Asset identifier
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvestmentRequest'
+            examples:
+              withInvestmentAmount:
+                summary: Investment amount provided — numberOfShares computed automatically
+                value:
+                  accountId: 1234-5678
+                  transactionId: a0000000-0000-0000-0000-000000000001
+                  amount: 499.51
+              withInvestmentAmountAndShares:
+                summary: Investment amount and numberOfShares provided
+                value:
+                  accountId: 1234-5678
+                  transactionId: a0000000-0000-0000-0000-000000000002
+                  amount: 499.51
+                  numberOfShares: 239
+              withInvesmentAmountAndRegCF:
+                summary: Reg CF asset (terms acceptance required)
+                value:
+                  accountId: 1234-5678
+                  transactionId: a0000000-0000-0000-0000-000000000003
+                  amount: 499.51
+                  regCFInvestmentTermsAccepted: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentDetails'
+              example:
+                investmentId: inv-123
+                amount: 1000
+                numberOfShares: 1000
+                fundedAmount: 0
+                status: CREATED
+                assetId: '39737'
+                transactionId: txn-001
+                paymentType: WIRE
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T11:30:42.534426Z'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Create investment — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | AMOUNT_REQUIRED | Amount is required. |
+
+            | AMOUNT_INVALID | Amount must be positive. |
+
+            | NUMBER_OF_SHARES_INVALID | Number of shares must be positive when provided. |
+
+            | ASSET_NOT_OPEN | Asset is not open for investment. |
+
+            | INVALID_AMOUNT_AND_SHARES | `amount` is not a valid investment in the asset. If `details` object is available it may contain following fields `recommendedAmount`, `recommendedNumberOfShares`, and `pricePerShare`. |
+
+            | REG_CF_TERMS_NOT_ACCEPTED | Reg CF investment terms must be accepted (Reg CF assets). |
+
+            | REG_CF_TERMS_ONLY_APPLICABLE_TO_REG_CF | Reg CF terms acceptance is only applicable to Reg CF assets. |
+
+            | ANNUAL_INCOME_REQUIRED | Annual income is required for Reg A and Reg CF investments. |
+
+            | NET_WORTH_REQUIRED | Net worth is required for Reg A and Reg CF investments. |
+
+            | INVESTMENT_CREATE_ERROR | Investment could not be created. |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                amountRequired:
+                  summary: Amount required
+                  value:
+                    errors:
+                    - code: AMOUNT_REQUIRED
+                      message: Amount is required
+                      field: amount
+                assetNotOpen:
+                  summary: Asset not open
+                  value:
+                    errors:
+                    - code: ASSET_NOT_OPEN
+                      message: Cannot create investment; asset is not open for investment.
+                amountAndSharesMismatch:
+                  summary: Amount and Number of Shars mismatch — recommended amounts in `details` object.
+                  value:
+                    errors:
+                    - code: INVALID_AMOUNT_AND_SHARES
+                      message: Investment amount must be adjusted to match Asset's price per share.
+                      field: amount
+                      details:
+                        recommendedAmount: 499.51
+                        recommendedNumberOfShares: 239
+                        pricePerShare: 2.09
+                amountBelowMin:
+                  summary: Investment Amount below requested minimum amount for the asset
+                  value:
+                    errors:
+                    - code: INVALID_AMOUNT_AND_SHARES
+                      message: Investment amount {2} is below the minimum required to purchase one share of the Asset.
+                      field: amount
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account or primary user)
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+      - Investments
+      summary: Update investment
+      description: 'Update an existing investment (amount, payment details, etc.).
+
+        Investment must belong to the account and match the asset in the path.
+
+        Payment details can also be configured via the dedicated PUT `.../payment` endpoint.
+
+        When `amount` is provided without `numberOfShares`, the amount is validated against the asset. On mismatch, a `INVALID_AMOUNT_AND_SHARES` error is returned.'
+      operationId: updateInvestment
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: Asset identifier.
+        schema:
+          type: string
+        example: '39737'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInvestmentRequest'
+            example:
+              accountId: PR-1234-5678
+              investmentId: U7F7D95Y
+              transactionId: a0000000-0000-0000-0000-000000000002
+              amount: 1500
+              paymentType: ACH
+              bankAccountId: fia-abc-123
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentDetails'
+              example:
+                investmentId: U7F7D95Y
+                amount: 1500
+                fundedAmount: 0
+                status: CREATED
+                assetId: '39737'
+                transactionId: a0000000-0000-0000-0000-000000000002
+                paymentType: ACH
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T12:00:00.000000Z'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Update investment — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | AMOUNT_INVALID | Amount must be positive when provided. |
+
+            | NUMBER_OF_SHARES_INVALID | Number of shares must be positive when provided. |
+
+            | INVESTMENT_UPDATE_NOT_ALLOWED | Investment update not allowed. |
+
+            | INVESTMENT_STATUS_NOT_ALLOWED_TO_UPDATE | Investment not allowed to be updated in current status. |
+
+            | ASSET_NOT_RELATED_TO_INVESTMENT | Asset is not related to the investment (path assetId mismatch). |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account, primary user, or investment)
+        '500':
+          description: Internal Server Error
+  /pi/v1/assets/{assetId}/investments/{investmentId}/payment:
+    put:
+      tags:
+      - Investments
+      summary: Add Payment details to the investment on file
+      description: 'Add payment details to an existing investment. This is a separate step from
+
+        updating investment amount/shares. Only WIRE and ACH payment types are supported.
+
+        For ACH, a `bankAccountId` (linked bank account) must be provided.'
+      operationId: addInvestmentPayment
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: Asset identifier.
+        schema:
+          type: string
+        example: '39737'
+      - name: investmentId
+        in: path
+        required: true
+        description: Investment identifier.
+        schema:
+          type: string
+        example: U7F7D95Y
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+            example:
+              accountId: PR-1234-5678
+              paymentType: ACH
+              bankAccountId: bank-account-uuid
+              transactionId: a0000000-0000-0000-0000-000000000003
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentDetails'
+              example:
+                investmentId: U7F7D95Y
+                amount: 1500
+                fundedAmount: 0
+                status: CREATED
+                assetId: '39737'
+                transactionId: a0000000-0000-0000-0000-000000000003
+                paymentType: ACH
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T12:15:00.000000Z'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Update payment — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | PAYMENT_TYPE_REQUIRED | Payment type is required. |
+
+            | BANK_ACCOUNT_ID_REQUIRED | Bank account ID is required when payment type is ACH. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | PAYMENT_TYPE_NOT_SUPPORTED | Payment type is not supported. Only WIRE and ACH are allowed. |
+
+            | INVESTMENT_STATUS_NOT_ALLOWED_TO_UPDATE | Investment cannot be updated in its current status (e.g. SUBMITTED). |
+
+            | PAYMENT_UPDATE_NOT_ALLOWED | Payment update not allowed (fallback code). |
+
+            | ASSET_NOT_RELATED_TO_INVESTMENT | Asset is not related to the investment (path assetId mismatch). |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                paymentTypeNotSupported:
+                  summary: Unsupported payment type
+                  value:
+                    errors:
+                    - code: PAYMENT_TYPE_NOT_SUPPORTED
+                      message: Payment type STRIPE is not supported for external API.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account, investment, or primary user)
+        '500':
+          description: Internal Server Error (INTERNAL_ERROR — unexpected error)
+  /pi/v1/investments/accounts/{accountId}:
+    get:
+      tags:
+      - Investments
+      summary: Get all investments for account
+      description: Returns all investments for the given account.
+      operationId: getInvestmentsByAccount
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        description: Account identifier.
+        schema:
+          type: string
+        example: PR-1234-5678
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvestmentDTO'
+              example:
+              - investmentId: U7F7D95Y
+                amount: 1000
+                numberOfShares: 100
+                costBasis: 1000
+                fundedAmount: 0
+                status: CREATED
+                assetId: '39737'
+                transactionId: a0000000-0000-0000-0000-000000000001
+                paymentType: WIRE
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T11:30:42.534426Z'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /pi/v1/investments/{investmentId}/submit:
+    post:
+      tags:
+      - Investments
+      summary: Submit investment
+      description: 'Submit the investment.
+
+        Payment is processed first; on success the investment is submitted.'
+      operationId: submitInvestment
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: investmentId
+        in: path
+        required: true
+        description: Investment identifier.
+        schema:
+          type: string
+        example: U7F7D95Y
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitInvestmentRequest'
+            example:
+              accountId: PR-1234-5678
+              transactionId: a0000000-0000-0000-0000-000000000003
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentDetails'
+              example:
+                investmentId: U7F7D95Y
+                amount: 1000
+                fundedAmount: 1000
+                status: SUBMITTED
+                assetId: '39737'
+                transactionId: a0000000-0000-0000-0000-000000000003
+                paymentType: WIRE
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T12:15:00.000000Z'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Submit investment — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | COUNTRY_MISMATCH | Jurisdiction is not supported; cannot proceed with payment or submission. |
+
+            | PAYMENT_SUBMISSION_FAILED | Payment could not be submitted. |
+
+            | PAYMENT_SUBMIT_ERROR | Payment submission error. |
+
+            | INVESTMENT_NOT_FOUND | Investment not found or can no longer be submitted. |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account or primary user)
+        '500':
+          description: Internal Server Error
+  /pi/v1/investments/{investmentId}:
+    delete:
+      tags:
+      - Investments
+      summary: Cancel investment
+      description: Cancel an investment.
+      operationId: cancelInvestment
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: investmentId
+        in: path
+        required: true
+        description: Investment identifier.
+        schema:
+          type: string
+        example: U7F7D95Y
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelInvestmentRequest'
+            example:
+              accountId: PR-1234-5678
+              transactionId: a0000000-0000-0000-0000-000000000004
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentDetails'
+              example:
+                investmentId: U7F7D95Y
+                amount: 1000
+                fundedAmount: 0
+                status: CANCELLED
+                assetId: '39737'
+                transactionId: a0000000-0000-0000-0000-000000000004
+                paymentType: WIRE
+                createdTs: '2025-12-11T11:30:42.534426Z'
+                modifiedTs: '2025-12-11T12:30:00.000000Z'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Cancel investment — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | INVESTMENT_CANNOT_BE_CANCELLED | This investment can no longer be canceled. |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account, primary user, or investment)
+        '500':
+          description: Internal Server Error
+  /pi/v1/assets/{assetId}/investments/{investmentId}/agreement:
+    post:
+      tags:
+      - Investments
+      summary: Sign MSA for investment
+      description: 'Sign the Master Subscription Agreement for an investment.
+
+        Signature name must match the account holder''s full name.'
+      operationId: signInvestmentAgreement
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        description: Asset identifier.
+        schema:
+          type: string
+        example: '39737'
+      - name: investmentId
+        in: path
+        required: true
+        description: Investment identifier.
+        schema:
+          type: string
+        example: U7F7D95Y
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvestmentSignatureRequest'
+            example:
+              accountId: PR-1234-5678
+              transactionId: a0000000-0000-0000-0000-000000000005
+              userSignature: John Doe
+              version: '1.0'
+      responses:
+        '200':
+          description: OK (investment status becomes SIGNED)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgreementDTO'
+              example:
+                id: 770e8400-e29b-41d4-a716-446655440002
+                userId: 43XSYHc0h4aU5cxMkqhIQn
+                assetId: '39737'
+                signedTs: '2025-12-11T12:20:00.000000Z'
+                documentId: 660e8400-e29b-41d4-a716-446655440001
+                status: SIGNED
+                expired: false
+                createdTs: '2025-12-11T12:20:00.000000Z'
+                createdBy: 43XSYHc0h4aU5cxMkqhIQn
+                modifiedTs: '2025-12-11T12:20:00.000000Z'
+                modifiedBy: 43XSYHc0h4aU5cxMkqhIQn
+                userSignature: John Doe
+                subscriptionType: STANDARD_MSA
+                documentVersion: '1.0'
+        '400':
+          description: 'Bad Request (validation failed or invalid payload). Body: `errors` array; each item has `code`, `message`, optional `field`.
+
+
+            **Sign agreement — error codes:**
+
+
+            | Code | Meaning |
+
+            |------|---------|
+
+            | ACCOUNT_ID_REQUIRED | Account identifier is required. |
+
+            | TRANSACTION_ID_REQUIRED | Transaction ID is required. |
+
+            | USER_SIGNATURE_REQUIRED | User signature (full name) is required. |
+
+            | USER_SIGNATURE_CANNOT_BE_BLANK | User signature cannot be blank. |
+
+            | VERSION_REQUIRED | MSA version is required. |
+
+            | VERSION_CANNOT_BE_BLANK | MSA version cannot be blank. |
+
+            | ASSET_NOT_RELATED_TO_INVESTMENT | Asset is not related to the investment (path assetId mismatch). |
+
+            | SIGNATURE_NAME_MISMATCH | Signature name must match the account holder''s name. |
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                signatureMismatch:
+                  summary: Signature name mismatch
+                  value:
+                    errors:
+                    - code: SIGNATURE_NAME_MISMATCH
+                      message: Signature name must match the account holder's name.
+                      field: userSignature
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found (account or primary user)
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    Asset:
+      type: object
+      description: Asset details.
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier (can be numeric or alphanumeric).
+          example: '39737'
+        symbol:
+          type:
+          - string
+          - 'null'
+          example: AF
+        assetName:
+          type:
+          - string
+          - 'null'
+          example: Abstract Face
+        assetDescription:
+          type:
+          - string
+          - 'null'
+          example: ''
+        assetType:
+          $ref: '#/components/schemas/CodeLabelDescription'
+        requiresAccreditation:
+          type:
+          - boolean
+          - 'null'
+        pricePerShare:
+          type:
+          - number
+          - 'null'
+          format: double
+        minimumInvestment:
+          type:
+          - number
+          - 'null'
+          format: double
+        maximumInvestment:
+          type:
+          - number
+          - 'null'
+          format: double
+        status:
+          type:
+          - string
+          - 'null'
+          example: OPEN
+        offeringCloseDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        offering:
+          $ref: '#/components/schemas/CodeLabelDescription'
+        countries:
+          type: array
+          items:
+            type: string
+        paymentTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CodeLabelDescription'
+    InvestmentSignatureRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      - userSignature
+      - version
+      properties:
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        userSignature:
+          type: string
+          description: Full name of signer (must match account holder).
+        version:
+          type: string
+          description: MSA document version.
+    InvestmentDetails:
+      type: object
+      properties:
+        investmentId:
+          type: string
+        amount:
+          type: number
+          format: double
+        numberOfShares:
+          type:
+          - number
+          - 'null'
+          format: double
+        costBasis:
+          type:
+          - number
+          - 'null'
+          format: double
+        fundedAmount:
+          type:
+          - number
+          - 'null'
+          format: double
+        status:
+          $ref: '#/components/schemas/InvestmentStatusEnum'
+        assetId:
+          type: string
+        transactionId:
+          type:
+          - string
+          - 'null'
+        paymentType:
+          allOf:
+          - $ref: '#/components/schemas/PaymentTypeEnum'
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    InvestmentDTO:
+      description: Investment object returned in list; same shape as InvestmentDetails.
+      allOf:
+      - $ref: '#/components/schemas/InvestmentDetails'
+    InvestmentStatusEnum:
+      type: string
+      enum:
+      - CREATED
+      - SIGNED
+      - SUBMITTED
+      - COMPLETED
+      - CANCELLED
+      - COUNTRY_MISMATCH
+      - APPROVED
+    CreatePaymentRequest:
+      type: object
+      description: Request body for updating payment details on an investment. Only WIRE and ACH payment types are supported.
+      required:
+      - accountId
+      - paymentType
+      - transactionId
+      properties:
+        accountId:
+          type: string
+          description: Account identifier.
+        paymentType:
+          $ref: '#/components/schemas/PaymentTypeEnum'
+        bankAccountId:
+          type:
+          - string
+          - 'null'
+          description: Linked bank account identifier. Required when paymentType is ACH.
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    AssetsResponse:
+      type: object
+      required:
+      - assets
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+    UpdateInvestmentRequest:
+      type: object
+      description: Request body for updating an investment (amount, payment details).
+      required:
+      - accountId
+      - investmentId
+      - transactionId
+      properties:
+        accountId:
+          type: string
+          description: Account identifier.
+        investmentId:
+          type: string
+          description: Investment identifier to update.
+        amount:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Investment amount (positive if provided)
+        numberOfShares:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Number of shares (positive if provided). Can be computed from `amount` when ignored.
+        paymentType:
+          type:
+          - string
+          - 'null'
+          enum:
+          - WIRE
+          - ACH
+          description: Payment type. Only WIRE and ACH are supported.
+        bankAccountId:
+          type:
+          - string
+          - 'null'
+          description: Bank account ID for ACH payments. Required when paymentType is ACH. Also accepts `achAccountId`.
+        paymentId:
+          type:
+          - string
+          - 'null'
+          description: Payment identifier.
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        selfAttestedAccreditationAnswer:
+          type:
+          - boolean
+          - 'null'
+          description: Self-attested accreditation answer.
+    PaymentTypeEnum:
+      type: string
+      description: Supported payment types. Only WIRE and ACH are allowed.
+      enum:
+      - WIRE
+      - ACH
+    ErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
+        message:
+          type: string
+          description: Human-readable message.
+        field:
+          type:
+          - string
+          - 'null'
+          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
+        details:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
+
+            '
+    CancelInvestmentRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      properties:
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    CodeLabelDescription:
+      type: object
+      properties:
+        code:
+          type: string
+          example: COMMON_STOCK
+        label:
+          type: string
+          example: Common Stock
+        description:
+          type:
+          - string
+          - 'null'
+          example: Common Stock.
+    SubmitInvestmentRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      properties:
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    AgreementDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+        assetId:
+          type: string
+        signedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        documentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        expired:
+          type: boolean
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdBy:
+          type: string
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedBy:
+          type: string
+        userSignature:
+          type: string
+        subscriptionType:
+          type: string
+          enum:
+          - STANDARD_MSA
+        documentVersion:
+          type: string
+    CreateInvestmentRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      - amount
+      properties:
+        accountId:
+          type: string
+          description: Account identifier.
+        transactionId:
+          type: string
+          description: Client-provided id for idempotency and auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        amount:
+          type: number
+          format: double
+          description: Investment amount (positive).
+        numberOfShares:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Number of shares (positive if provided). Optional value that gets computed from `amount` when ignored.
+        regCFInvestmentTermsAccepted:
+          type:
+          - boolean
+          - 'null'
+          description: Required true for Reg CF assets; optional for others.
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+  securitySchemes:
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-apikey
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshToken:
+      type: refreshToken
+      in: header
+      name: refreshToken

@@ -1,0 +1,328 @@
+openapi: 3.2.0
+info:
+  title: Issuance & Secondary Markets API
+  description: APIs to Create Individual broker dealer accounts, Trigger KYC on the investors in the account, Review account information and KYC results, View Primary offering that are available to invest and manage investments in the assets.
+servers:
+- url: https://gateway-web-api.tzero.com/app
+tags:
+- name: Markets
+  description: Market schedule information including pre-market, regular, and post-market hours.
+paths:
+  /markets/v1/schedules:
+    get:
+      tags:
+      - Markets
+      summary: Get market schedules
+      description: 'Returns pre-market, market, and post-market hours for the tZERO broker.
+
+
+        The `type` query parameter selects which schedule variant is returned:
+
+        - `TRADING` — hours during which trades can be executed.
+
+        - `ORDERS` — hours during which orders can be submitted.'
+      operationId: getMarketSchedules
+      security:
+      - x-api-key: []
+      parameters:
+      - name: type
+        in: query
+        required: true
+        description: Schedule variant to return.
+        schema:
+          type: string
+          enum:
+          - TRADING
+          - ORDERS
+          default: TRADING
+      - name: start
+        in: query
+        required: false
+        description: 'Date in `yyyy-MM-dd` or ISO-8601 format before which schedules should not be returned. If not provided a default is used.
+
+          '
+        schema:
+          type: string
+        example: '2026-04-13'
+      - name: stop
+        in: query
+        required: false
+        description: 'Date in `yyyy-MM-dd` or ISO-8601 format after which schedules should not be returned. If not provided a default is used.
+
+          '
+        schema:
+          type: string
+        example: '2026-04-20'
+      - name: zoneid
+        in: query
+        required: false
+        description: 'ISO-8601 zone ID in which returned hours should be messaged (e.g. `America/New_York`, `America/Los_Angeles`, `Europe/Paris`). If not provided a default is used.
+
+          '
+        schema:
+          type: string
+        example: America/New_York
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+              examples:
+                success:
+                  summary: Example response
+                  value:
+                    dto:
+                    - date: '2026-04-13'
+                      zoneId: America/New_York
+                      description: Regular trading day
+                      preMarketHours:
+                        open: '2026-04-13T07:00:00-04:00'
+                        close: '2026-04-13T09:30:00-04:00'
+                      marketHours:
+                        open: '2026-04-13T09:30:00-04:00'
+                        close: '2026-04-13T16:00:00-04:00'
+                      postMarketHours:
+                        open: '2026-04-13T16:00:00-04:00'
+                        close: '2026-04-13T20:00:00-04:00'
+                    errors: null
+        '400':
+          description: 'Bad Request — `type` query parameter is missing or not one of the supported values (`SCHEDULE_TYPE_INVALID`).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+              examples:
+                invalidType:
+                  summary: Invalid schedule type
+                  value:
+                    dto: null
+                    errors:
+                    - code: SCHEDULE_TYPE_INVALID
+                      message: 'Unsupported schedule type ''FOO''.  Expected one of: TRADING, ORDERS.'
+        '500':
+          description: Internal Server Error
+  /markets/v1/mdt/public-pricehistory/{symbol}:
+    get:
+      tags:
+      - Markets
+      summary: Get Price History for a Symbol
+      description: Returns pricehistory for the requested Symbol
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: symbol
+        in: path
+        required: true
+        description: Symbol that will be used to retrieve the price history"
+        schema:
+          type: string
+        example: TZROP
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  priceHistories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PriceHistory'
+      operationId: getMarketsV1MdtPublicPricehistoryBySymbol
+      x-operation-id-source: derived
+  /markets/v1/mdt/public-snapshots/{symbol}:
+    get:
+      tags:
+      - Markets
+      summary: Get marketdata snapshot for a symbol
+      description: Returns Market snapshot for a requested symbol in the path
+      security:
+      - x-api-key: []
+        bearerAuth: []
+      parameters:
+      - name: symbol
+        in: path
+        required: true
+        description: Symbol that will be used to retrieve the market snapshot"
+        schema:
+          type: string
+        example: TZROP
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymbolData'
+              examples:
+                TZROP:
+                  summary: TZROP Snapshot
+                  value:
+                    symbol: TZROP
+                    high: 1
+                    low: 1
+                    open: 1
+                    volume: 30
+                    lastPrice: 1
+                    lastQuantity: 10
+                    prevClosePx: 3.5
+                    bidPrice: 3.92
+                    bidPriceRate: null
+                    bidQuantity: 5000
+                    bidQtyBookTotal: 5167
+                    askPrice: 3.52
+                    askPriceRate: null
+                    askQuantity: 75
+                    askQtyBookTotal: 3105
+                    timestamp: '2026-01-30T14:11:47.969023549-05:00'
+      operationId: getMarketsV1MdtPublicSnapshotsBySymbol
+      x-operation-id-source: derived
+components:
+  schemas:
+    SymbolData:
+      type: object
+      description: Represents market data for a symbol.
+      properties:
+        symbol:
+          type: string
+        high:
+          type: number
+        low:
+          type: number
+        open:
+          type: number
+        volume:
+          type: integer
+        lastPrice:
+          type: number
+        lastQuantity:
+          type: number
+        prevClosePx:
+          type: number
+        bidPrice:
+          type: number
+        bidPriceRate:
+          type: number
+        bidQuantity:
+          type: number
+        bidQtyBookTotal:
+          type: number
+        askPrice:
+          type: number
+        askPriceRate:
+          type: number
+        askQuantity:
+          type: number
+        askQtyBookTotal:
+          type: number
+        timestamp:
+          type: string
+    SubSchedule:
+      type: object
+      description: A portion of a single day defining open and close times for a trading session.
+      required:
+      - open
+      - close
+      properties:
+        open:
+          type: string
+          format: date-time
+          description: ISO-8601 date and time when orders are first accepted and trades can be made (inclusive).
+        close:
+          type: string
+          format: date-time
+          description: ISO-8601 date and time after which orders are no longer accepted and trades will not be made (exclusive).
+    ScheduleResponse:
+      type: object
+      description: Wrapper response for market schedule queries. Contains either a list of schedules in `dto` or a list of `errors`.
+      properties:
+        dto:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MarketSchedule'
+        errors:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ScheduleError'
+    MarketSchedule:
+      type: object
+      description: Pre-market, market, and post-market hours for a single trading day.
+      required:
+      - date
+      - zoneId
+      properties:
+        date:
+          type: string
+          format: date
+          description: Date in `yyyy-MM-dd` format that the trading hours apply to.
+        zoneId:
+          type: string
+          description: ISO-8601 zone ID that all open and close times are messaged in (e.g. `America/New_York`).
+        description:
+          type:
+          - string
+          - 'null'
+          description: Optional text roughly describing the date as a whole. Format may change without notice.
+        preMarketHours:
+          allOf:
+          - $ref: '#/components/schemas/SubSchedule'
+          description: Trading activity schedule that occurs before regular market hours. Null if pre-market trading is not available this day.
+        marketHours:
+          allOf:
+          - $ref: '#/components/schemas/SubSchedule'
+          description: Regular business day trading hours. Null if not allowed this day.
+        postMarketHours:
+          allOf:
+          - $ref: '#/components/schemas/SubSchedule'
+          description: Trading activity schedule that occurs after regular market hours. Null if post-market trading is not available this day.
+    ScheduleError:
+      type: object
+      description: Error item returned by the schedule endpoints.
+      properties:
+        code:
+          type: string
+          description: Error code (e.g. `SCHEDULE_TYPE_INVALID`).
+        message:
+          type: string
+          description: Human-readable error message.
+    PriceHistory:
+      type: object
+      description: Represents Price History data for a symbol.
+      properties:
+        symbol:
+          type: string
+        date:
+          type: string
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+        volume:
+          type: integer
+  securitySchemes:
+    x-api-key:
+      type: apiKey
+      in: header
+      name: x-apikey
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshToken:
+      type: refreshToken
+      in: header
+      name: refreshToken
