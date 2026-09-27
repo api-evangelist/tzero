@@ -40,7 +40,7 @@ tags:
 - Transfer Agent
 - Custody
 - Blockchain
-- Financial-Services
+- Financial Services
 - Securities
 - Market Data
 - FIX Protocol
@@ -58,6 +58,7 @@ tags_raw:
 - Securities
 - Market Data
 - FIX Protocol
+- Financial-Services
 apis:
 - aid: tzero:fix
   name: tZERO FIX API

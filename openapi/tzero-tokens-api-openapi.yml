@@ -122,6 +122,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-2:
       type: object
       description: A token configuration (the blueprint). Deployments are its on-chain instances.
@@ -190,22 +206,6 @@ components:
           items:
             $ref: '#/components/schemas/def-3'
       title: TokenConfig
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-3:
       type: object
       description: An on-chain instance of a token configuration on a specific chain/network.

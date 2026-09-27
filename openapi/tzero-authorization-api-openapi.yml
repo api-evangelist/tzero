@@ -75,19 +75,6 @@ paths:
           description: Not Found
 components:
   schemas:
-    TokenResponse:
-      type: object
-      required:
-      - accessToken
-      - expiresIn
-      properties:
-        accessToken:
-          type: string
-        expiresIn:
-          type: number
-        refreshToken:
-          type: string
-      title: TokenResponse
     Message:
       type: object
       required:
@@ -114,6 +101,19 @@ components:
         clientSecret:
           type: string
       title: TokenRequest
+    TokenResponse:
+      type: object
+      required:
+      - accessToken
+      - expiresIn
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: number
+        refreshToken:
+          type: string
+      title: TokenResponse
   securitySchemes:
     x-api-key:
       type: apiKey

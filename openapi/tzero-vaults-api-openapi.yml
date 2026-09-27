@@ -165,47 +165,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-6:
-      type: object
-      description: A Fireblocks-backed custody vault owned by the issuer.
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        fireblocksVaultId:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        wallets:
-          type: array
-          items:
-            $ref: '#/components/schemas/def-5'
-        _count:
-          type: object
-          properties:
-            wallets:
-              type: integer
-            transfers:
-              type: integer
-      title: CustodyVault
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-5:
       type: object
       description: An asset wallet inside a custody vault.
@@ -243,6 +202,47 @@ components:
               type: string
               example: Investor not found
       title: ErrorResponse
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-6:
+      type: object
+      description: A Fireblocks-backed custody vault owned by the issuer.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        fireblocksVaultId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        wallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/def-5'
+        _count:
+          type: object
+          properties:
+            wallets:
+              type: integer
+            transfers:
+              type: integer
+      title: CustodyVault
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

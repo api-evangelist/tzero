@@ -279,6 +279,55 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-13:
+      type: object
+      properties:
+        rank:
+          type: integer
+        walletAddress:
+          type:
+          - string
+          - 'null'
+          description: On-chain holder wallet address
+        investorId:
+          type:
+          - string
+          - 'null'
+        investorName:
+          type:
+          - string
+          - 'null'
+        shares:
+          type: string
+          description: Shares held (integer as string)
+        percentage:
+          type:
+          - string
+          - 'null'
+          description: Percentage of shares outstanding
+        lastSyncAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last chain-sync timestamp
+      title: SecurityHolder
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-12:
       type: object
       properties:
@@ -353,55 +402,6 @@ components:
           type: string
           format: date-time
       title: Security
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
-    def-13:
-      type: object
-      properties:
-        rank:
-          type: integer
-        walletAddress:
-          type:
-          - string
-          - 'null'
-          description: On-chain holder wallet address
-        investorId:
-          type:
-          - string
-          - 'null'
-        investorName:
-          type:
-          - string
-          - 'null'
-        shares:
-          type: string
-          description: Shares held (integer as string)
-        percentage:
-          type:
-          - string
-          - 'null'
-          description: Percentage of shares outstanding
-        lastSyncAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Last chain-sync timestamp
-      title: SecurityHolder
     def-1:
       type: object
       properties:

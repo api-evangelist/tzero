@@ -437,58 +437,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-11:
-      type: object
-      properties:
-        securityId:
-          type:
-          - string
-          - 'null'
-        securityName:
-          type:
-          - string
-          - 'null'
-        securityType:
-          type:
-          - string
-          - 'null'
-          description: Security type (e.g. COMMON_STOCK)
-        symbol:
-          type:
-          - string
-          - 'null'
-          description: Security ticker symbol
-        shares:
-          type: string
-          description: Integer as string
-        percentage:
-          type:
-          - string
-          - 'null'
-          description: Percentage of shares outstanding
-        lastSyncAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Last chain-sync timestamp
-      title: InvestorHolding
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-10:
       type: object
       properties:
@@ -577,6 +525,58 @@ components:
           type: string
           format: date-time
       title: Investor
+    def-11:
+      type: object
+      properties:
+        securityId:
+          type:
+          - string
+          - 'null'
+        securityName:
+          type:
+          - string
+          - 'null'
+        securityType:
+          type:
+          - string
+          - 'null'
+          description: Security type (e.g. COMMON_STOCK)
+        symbol:
+          type:
+          - string
+          - 'null'
+          description: Security ticker symbol
+        shares:
+          type: string
+          description: Integer as string
+        percentage:
+          type:
+          - string
+          - 'null'
+          description: Percentage of shares outstanding
+        lastSyncAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last chain-sync timestamp
+      title: InvestorHolding
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-1:
       type: object
       properties:

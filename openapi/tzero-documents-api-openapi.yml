@@ -313,22 +313,6 @@ paths:
     - url: https://gateway-web-api.tzero.com/app
 components:
   schemas:
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-16:
       type: object
       properties:
@@ -383,6 +367,22 @@ components:
           type: string
           format: date-time
       title: Document
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-1:
       type: object
       properties:

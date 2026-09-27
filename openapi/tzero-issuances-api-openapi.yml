@@ -277,6 +277,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-15:
       type: object
       properties:
@@ -369,22 +385,6 @@ components:
           - 'null'
           description: Correlation id echoed on submission responses — matches the issuanceId in ta.issuance.* webhook events
       title: IssuanceRequest
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-1:
       type: object
       properties:

@@ -276,34 +276,41 @@ paths:
           description: Bad Gateway (service unavailable or returned an error)
 components:
   schemas:
-    CreateBankTransferRequest:
+    ErrorResponse:
       type: object
-      description: Request body for initiating a bank transfer account.
-      required:
-      - transactionId
-      - amount
-      - transactionType
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
       properties:
-        transactionId:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    BankAccountDetails:
+      type: object
+      properties:
+        bankAccountId:
           type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-        amount:
-          type: number
-          format: double
-        transactionType:
+          description: Unique identifier for the linked bank account.
+        bankName:
           type: string
-          enum:
-          - DEPOSIT
-          - WITHDRAWAL
-          description: Bank transaction type associated to the request.
-        currency:
+        maskedAccountNumber:
           type:
           - string
           - 'null'
+          description: Last 4 digits of the account number.
+        accountType:
+          type: string
           enum:
-          - USD
-          example: USD
+          - CHECKING
+          - SAVINGS
+          description: Type of bank account. May be empty if account type is unknown.
+        status:
+          type: string
+          description: 'Bank account status: APPROVED, PENDING, DECLINED, or CANCELED.'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Client-provided transaction ID (only present on link response).
     CreateBankTransferResponse:
       type: object
       description: Response object for bank transfer transaction.
@@ -341,33 +348,6 @@ components:
           enum:
           - USD
           example: USD
-    BankAccountDetails:
-      type: object
-      properties:
-        bankAccountId:
-          type: string
-          description: Unique identifier for the linked bank account.
-        bankName:
-          type: string
-        maskedAccountNumber:
-          type:
-          - string
-          - 'null'
-          description: Last 4 digits of the account number.
-        accountType:
-          type: string
-          enum:
-          - CHECKING
-          - SAVINGS
-          description: Type of bank account. May be empty if account type is unknown.
-        status:
-          type: string
-          description: 'Bank account status: APPROVED, PENDING, DECLINED, or CANCELED.'
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Client-provided transaction ID (only present on link response).
     ErrorItem:
       type: object
       properties:
@@ -437,14 +417,34 @@ components:
           - 'null'
           description: Optional free-text field for audit trail describing how the bank details were verified.
           example: Verified via Plaid
-    ErrorResponse:
+    CreateBankTransferRequest:
       type: object
-      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      description: Request body for initiating a bank transfer account.
+      required:
+      - transactionId
+      - amount
+      - transactionType
       properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorItem'
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        amount:
+          type: number
+          format: double
+        transactionType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          description: Bank transaction type associated to the request.
+        currency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - USD
+          example: USD
   securitySchemes:
     x-api-key:
       type: apiKey
