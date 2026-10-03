@@ -279,55 +279,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-13:
+    def-1:
       type: object
       properties:
-        rank:
-          type: integer
-        walletAddress:
-          type:
-          - string
-          - 'null'
-          description: On-chain holder wallet address
-        investorId:
-          type:
-          - string
-          - 'null'
-        investorName:
-          type:
-          - string
-          - 'null'
-        shares:
-          type: string
-          description: Shares held (integer as string)
-        percentage:
-          type:
-          - string
-          - 'null'
-          description: Percentage of shares outstanding
-        lastSyncAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Last chain-sync timestamp
-      title: SecurityHolder
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
     def-12:
       type: object
       properties:
@@ -402,22 +369,55 @@ components:
           type: string
           format: date-time
       title: Security
-    def-1:
+    def-0:
       type: object
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-13:
+      type: object
+      properties:
+        rank:
+          type: integer
+        walletAddress:
+          type:
+          - string
+          - 'null'
+          description: On-chain holder wallet address
+        investorId:
+          type:
+          - string
+          - 'null'
+        investorName:
+          type:
+          - string
+          - 'null'
+        shares:
+          type: string
+          description: Shares held (integer as string)
+        percentage:
+          type:
+          - string
+          - 'null'
+          description: Percentage of shares outstanding
+        lastSyncAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last chain-sync timestamp
+      title: SecurityHolder
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

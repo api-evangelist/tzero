@@ -277,22 +277,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-0:
+    def-1:
       type: object
       properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
     def-15:
       type: object
       properties:
@@ -385,22 +385,22 @@ components:
           - 'null'
           description: Correlation id echoed on submission responses — matches the issuanceId in ta.issuance.* webhook events
       title: IssuanceRequest
-    def-1:
+    def-0:
       type: object
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

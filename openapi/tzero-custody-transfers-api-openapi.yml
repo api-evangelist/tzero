@@ -92,22 +92,6 @@ components:
               type: string
               example: Investor not found
       title: ErrorResponse
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-7:
       type: object
       description: A transfer of assets out of a custody vault.
@@ -145,6 +129,22 @@ components:
           type: string
           format: date-time
       title: CustodyTransfer
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

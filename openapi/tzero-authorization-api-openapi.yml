@@ -90,17 +90,6 @@ components:
         message:
           type: string
       title: Message
-    TokenRequest:
-      type: object
-      required:
-      - clientId
-      - clientSecret
-      properties:
-        clientId:
-          type: string
-        clientSecret:
-          type: string
-      title: TokenRequest
     TokenResponse:
       type: object
       required:
@@ -114,6 +103,17 @@ components:
         refreshToken:
           type: string
       title: TokenResponse
+    TokenRequest:
+      type: object
+      required:
+      - clientId
+      - clientSecret
+      properties:
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+      title: TokenRequest
   securitySchemes:
     x-api-key:
       type: apiKey

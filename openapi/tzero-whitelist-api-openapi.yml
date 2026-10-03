@@ -113,20 +113,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-8:
+    def-1:
       type: object
       properties:
-        id:
-          type: string
-        assetId:
-          type: string
-        address:
-          type: string
-        tag:
-          type:
-          - string
-          - 'null'
-      title: WhitelistedAddressAsset
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
     def-9:
       type: object
       description: An external address approved to receive transfers from custody.
@@ -177,22 +179,20 @@ components:
           type: integer
           description: Total number of pages
       title: PaginationMeta
-    def-1:
+    def-8:
       type: object
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
+        id:
+          type: string
+        assetId:
+          type: string
+        address:
+          type: string
+        tag:
+          type:
+          - string
+          - 'null'
+      title: WhitelistedAddressAsset
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

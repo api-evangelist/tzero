@@ -185,6 +185,44 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    SymbolData:
+      type: object
+      description: Represents market data for a symbol.
+      properties:
+        symbol:
+          type: string
+        high:
+          type: number
+        low:
+          type: number
+        open:
+          type: number
+        volume:
+          type: integer
+        lastPrice:
+          type: number
+        lastQuantity:
+          type: number
+        prevClosePx:
+          type: number
+        bidPrice:
+          type: number
+        bidPriceRate:
+          type: number
+        bidQuantity:
+          type: number
+        bidQtyBookTotal:
+          type: number
+        askPrice:
+          type: number
+        askPriceRate:
+          type: number
+        askQuantity:
+          type: number
+        askQtyBookTotal:
+          type: number
+        timestamp:
+          type: string
     ScheduleResponse:
       type: object
       description: Wrapper response for market schedule queries. Contains either a list of schedules in `dto` or a list of `errors`.
@@ -201,6 +239,31 @@ components:
           - 'null'
           items:
             $ref: '#/components/schemas/ScheduleError'
+    SubSchedule:
+      type: object
+      description: A portion of a single day defining open and close times for a trading session.
+      required:
+      - open
+      - close
+      properties:
+        open:
+          type: string
+          format: date-time
+          description: ISO-8601 date and time when orders are first accepted and trades can be made (inclusive).
+        close:
+          type: string
+          format: date-time
+          description: ISO-8601 date and time after which orders are no longer accepted and trades will not be made (exclusive).
+    ScheduleError:
+      type: object
+      description: Error item returned by the schedule endpoints.
+      properties:
+        code:
+          type: string
+          description: Error code (e.g. `SCHEDULE_TYPE_INVALID`).
+        message:
+          type: string
+          description: Human-readable error message.
     PriceHistory:
       type: object
       description: Represents Price History data for a symbol.
@@ -250,69 +313,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/SubSchedule'
           description: Trading activity schedule that occurs after regular market hours. Null if post-market trading is not available this day.
-    ScheduleError:
-      type: object
-      description: Error item returned by the schedule endpoints.
-      properties:
-        code:
-          type: string
-          description: Error code (e.g. `SCHEDULE_TYPE_INVALID`).
-        message:
-          type: string
-          description: Human-readable error message.
-    SymbolData:
-      type: object
-      description: Represents market data for a symbol.
-      properties:
-        symbol:
-          type: string
-        high:
-          type: number
-        low:
-          type: number
-        open:
-          type: number
-        volume:
-          type: integer
-        lastPrice:
-          type: number
-        lastQuantity:
-          type: number
-        prevClosePx:
-          type: number
-        bidPrice:
-          type: number
-        bidPriceRate:
-          type: number
-        bidQuantity:
-          type: number
-        bidQtyBookTotal:
-          type: number
-        askPrice:
-          type: number
-        askPriceRate:
-          type: number
-        askQuantity:
-          type: number
-        askQtyBookTotal:
-          type: number
-        timestamp:
-          type: string
-    SubSchedule:
-      type: object
-      description: A portion of a single day defining open and close times for a trading session.
-      required:
-      - open
-      - close
-      properties:
-        open:
-          type: string
-          format: date-time
-          description: ISO-8601 date and time when orders are first accepted and trades can be made (inclusive).
-        close:
-          type: string
-          format: date-time
-          description: ISO-8601 date and time after which orders are no longer accepted and trades will not be made (exclusive).
   securitySchemes:
     x-api-key:
       type: apiKey

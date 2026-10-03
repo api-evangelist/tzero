@@ -183,35 +183,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-4:
-      type: object
-      description: A logged on-chain operation against a deployment (MINT, BURN, TRANSFER, …).
-      properties:
-        id:
-          type: string
-        operation:
-          type: string
-          example: MINT
-        params:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-        txHash:
-          type:
-          - string
-          - 'null'
-        txStatus:
-          type: string
-          example: CONFIRMED
-        error:
-          type:
-          - string
-          - 'null'
-        createdAt:
-          type: string
-          format: date-time
-      title: Operation
     def-1:
       type: object
       properties:
@@ -244,6 +215,35 @@ components:
           type: integer
           description: Total number of pages
       title: PaginationMeta
+    def-4:
+      type: object
+      description: A logged on-chain operation against a deployment (MINT, BURN, TRANSFER, …).
+      properties:
+        id:
+          type: string
+        operation:
+          type: string
+          example: MINT
+        params:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        txHash:
+          type:
+          - string
+          - 'null'
+        txStatus:
+          type: string
+          example: CONFIRMED
+        error:
+          type:
+          - string
+          - 'null'
+        createdAt:
+          type: string
+          format: date-time
+      title: Operation
     def-3:
       type: object
       description: An on-chain instance of a token configuration on a specific chain/network.

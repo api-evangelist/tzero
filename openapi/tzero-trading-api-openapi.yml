@@ -282,90 +282,23 @@ paths:
           description: Service Unavailable
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorItem'
-    CancelOrderResponse:
+    FeeResponse:
       type: object
       required:
-      - transactionId
+      - fee
       - status
-      - id
+      - feeFormatted
       properties:
-        transactionId:
-          type: string
-        id:
-          type: string
-        status:
-          type: string
-          enum:
-          - CANCEL_REQUESTED
-    CreateOrderResponse:
-      type: object
-      properties:
-        transactionId:
-          type: string
-        id:
-          type: string
-        accountId:
-          type: string
-        symbol:
-          type: string
-        assetId:
-          type: string
-        side:
-          type: string
-          enum:
-          - BUY
-          - SELL
-        quantity:
-          type: number
-          format: double
-        type:
-          type: string
-          enum:
-          - LIMIT
-        limitPrice:
-          type: number
-          format: double
-        timeInForce:
-          type: string
-          enum:
-          - DAY
-          - GTD
-          - GTC
-          description: 'Time the order is valid for (DAY, GTC, GTD)
-
-            '
-        status:
-          type: string
-          enum:
-          - SUBMITTED
-        expireTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
         fee:
-          type:
-          - number
-          - 'null'
+          type: number
           format: double
+          description: The amount in USD which will be charged if the previously proposed trade is completed.
+        feeFormatted:
+          type: string
+          description: A formatted string representing the amount in USD which will be charged if the previously proposed trade is completed
+        status:
+          type: string
+          description: DEPRECATED. Text description roughly equivalent to a HTTP status code
     OrderExecution:
       type: object
       required:
@@ -446,6 +379,29 @@ components:
           - 'null'
           format: double
           description: Execution total including fees (in USD).
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    CancelOrderResponse:
+      type: object
+      required:
+      - transactionId
+      - status
+      - id
+      properties:
+        transactionId:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - CANCEL_REQUESTED
     ErrorItem:
       type: object
       properties:
@@ -468,55 +424,76 @@ components:
           description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
 
             '
-    CreateOrderRequest:
+    CreateOrderResponse:
       type: object
-      required:
-      - transactionId
-      - symbol
-      - assetId
-      - side
-      - timeInForce
-      - type
-      - quantity
-      - limitPrice
       properties:
+        transactionId:
+          type: string
+        id:
+          type: string
+        accountId:
+          type: string
         symbol:
           type: string
         assetId:
           type: string
         side:
           type: string
-          description: BUY or SELL
           enum:
           - BUY
           - SELL
+        quantity:
+          type: number
+          format: double
+        type:
+          type: string
+          enum:
+          - LIMIT
+        limitPrice:
+          type: number
+          format: double
         timeInForce:
           type: string
           enum:
           - DAY
           - GTD
           - GTC
-          description: 'Time in Force. Accepts (DAY, GTC, GTD)
+          description: 'Time the order is valid for (DAY, GTC, GTD)
 
             '
-        expireDate:
+        status:
+          type: string
+          enum:
+          - SUBMITTED
+        expireTs:
           type:
           - string
           - 'null'
-          description: Expiration date (yyyy-MM-dd). Required only when timeInForce is GOOD_TIL_DATE; must be null for DAY/GTC.
-        type:
-          type: string
-          enum:
-          - LIMIT
-        quantity:
-          type: number
+          format: date-time
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        fee:
+          type:
+          - number
+          - 'null'
           format: double
-        limitPrice:
-          type: number
-          format: double
-        transactionId:
-          type: string
-          description: Client-provided transaction identifier for idempotency and tracing.
+    OrdersListResponse:
+      type: object
+      required:
+      - orders
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderResponse'
     OrderResponse:
       type: object
       required:
@@ -646,32 +623,55 @@ components:
           items:
             $ref: '#/components/schemas/OrderExecution'
           description: Execution history for an order.
-    OrdersListResponse:
+    CreateOrderRequest:
       type: object
       required:
-      - orders
+      - transactionId
+      - symbol
+      - assetId
+      - side
+      - timeInForce
+      - type
+      - quantity
+      - limitPrice
       properties:
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderResponse'
-    FeeResponse:
-      type: object
-      required:
-      - fee
-      - status
-      - feeFormatted
-      properties:
-        fee:
+        symbol:
+          type: string
+        assetId:
+          type: string
+        side:
+          type: string
+          description: BUY or SELL
+          enum:
+          - BUY
+          - SELL
+        timeInForce:
+          type: string
+          enum:
+          - DAY
+          - GTD
+          - GTC
+          description: 'Time in Force. Accepts (DAY, GTC, GTD)
+
+            '
+        expireDate:
+          type:
+          - string
+          - 'null'
+          description: Expiration date (yyyy-MM-dd). Required only when timeInForce is GOOD_TIL_DATE; must be null for DAY/GTC.
+        type:
+          type: string
+          enum:
+          - LIMIT
+        quantity:
           type: number
           format: double
-          description: The amount in USD which will be charged if the previously proposed trade is completed.
-        feeFormatted:
+        limitPrice:
+          type: number
+          format: double
+        transactionId:
           type: string
-          description: A formatted string representing the amount in USD which will be charged if the previously proposed trade is completed
-        status:
-          type: string
-          description: DEPRECATED. Text description roughly equivalent to a HTTP status code
+          description: Client-provided transaction identifier for idempotency and tracing.
   securitySchemes:
     x-api-key:
       type: apiKey

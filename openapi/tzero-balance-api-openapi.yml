@@ -66,24 +66,6 @@ components:
           type: number
           format: double
           description: Average cost incurred for the asset.
-    AccountBalanceResponse:
-      type: object
-      properties:
-        accountBalances:
-          $ref: '#/components/schemas/BalanceDetails'
-    BalanceDetails:
-      type: object
-      properties:
-        accountId:
-          type: string
-        fiat:
-          type: array
-          items:
-            $ref: '#/components/schemas/FiatBalance'
-        positions:
-          type: array
-          items:
-            $ref: '#/components/schemas/PositionBalance'
     FiatBalance:
       type: object
       properties:
@@ -122,6 +104,24 @@ components:
           description: Indicates if the asset held can ne traded by ATS.
         costBasis:
           $ref: '#/components/schemas/CostBasis'
+    BalanceDetails:
+      type: object
+      properties:
+        accountId:
+          type: string
+        fiat:
+          type: array
+          items:
+            $ref: '#/components/schemas/FiatBalance'
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionBalance'
+    AccountBalanceResponse:
+      type: object
+      properties:
+        accountBalances:
+          $ref: '#/components/schemas/BalanceDetails'
   securitySchemes:
     x-api-key:
       type: apiKey
