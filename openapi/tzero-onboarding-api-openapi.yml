@@ -827,126 +827,77 @@ paths:
           description: Internal Server Error
 components:
   schemas:
-    PatchFinancialInfoRequest:
+    AccountTrustedContact:
       type: object
-      description: All fields optional except transactionId; only provided fields are updated.
       required:
-      - transactionId
+      - email
+      - firstName
+      - lastName
+      - physicalAddress
+      - phoneNumber
       properties:
-        transactionId:
+        email:
           type: string
-          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
-          example: a0000000-0000-0000-0000-000000000001
-        netWorth:
-          type:
-          - number
-          - 'null'
-          format: decimal
-          minimum: 0
-          description: Net worth; when provided, updates primary user's net worth.
-        annualIncome:
-          type:
-          - number
-          - 'null'
-          format: decimal
-          minimum: 0
-          description: Annual income; when provided, updates primary user's annual income.
-    InvestmentObjective:
-      type: string
-      enum:
-      - CAPITAL_APPRECIATION
-      - SPECULATION
-      - TRADING_PROFITS
-      description: Case-insensitive when deserializing.
-    GovernmentIdentifierResponse:
-      type: object
-      properties:
-        id:
+          format: email
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        middleName:
           type:
           - string
           - 'null'
-          format: uuid
-          example: aaaaaaaa-bbbb-cccc-dddd-333333333333
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        physicalAddress:
+          $ref: '#/components/schemas/TrustedContactAddress'
+        phoneNumber:
+          type: string
+    GovernmentIdentifierType:
+      type: string
+      enum:
+      - TIN
+      - INTERNATIONAL_TIN
+      - PASSPORT
+      - EIN
+      example: TIN
+    GovernmentIdentifierRequest:
+      type: object
+      properties:
         type:
           $ref: '#/components/schemas/GovernmentIdentifierType'
         country:
-          type: string
+          type:
+          - string
+          - 'null'
+          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
           example: US
         identifier:
           type:
           - string
           - 'null'
           example: '123456789'
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-    AddressResponse:
+    EmploymentRequest:
       type: object
+      required:
+      - employmentStatus
       properties:
-        id:
+        employmentStatus:
+          $ref: '#/components/schemas/EmploymentStatus'
+        employerName:
           type:
           - string
           - 'null'
-          format: uuid
-          example: 2f3b2c1a-4c1b-4b1b-9d1a-111111111111
-        street:
+          maxLength: 100
+          description: Required when employmentStatus is FULL_TIME_EMPLOYED or PART_TIME_EMPLOYED.
+        occupation:
           type:
           - string
           - 'null'
-        street2:
-          type:
-          - string
-          - 'null'
-        street3:
-          type:
-          - string
-          - 'null'
-        street4:
-          type:
-          - string
-          - 'null'
-        street5:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-        city:
-          type:
-          - string
-          - 'null'
-        stateOrProvince:
-          type:
-          - string
-          - 'null'
-          description: State or province.
-        postalCode:
-          type:
-          - string
-          - 'null'
-        country:
-          type:
-          - string
-          - 'null'
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
+          maxLength: 100
+          description: Required when employmentStatus is FULL_TIME_EMPLOYED or PART_TIME_EMPLOYED.
     InvestorUpdateRequest:
       type: object
       description: 'Investor update payload.
@@ -1040,114 +991,27 @@ components:
             '
           items:
             $ref: '#/components/schemas/GovernmentIdentifierRequest'
-    PhoneNumberRequest:
-      type: object
-      properties:
-        countryCode:
-          type:
-          - string
-          - 'null'
-          example: '1'
-        countryCodeAlpha:
-          type:
-          - string
-          - 'null'
-          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
-          example: US
-        nationalNumber:
-          type:
-          - string
-          - 'null'
-          example: '2125550123'
-        ext:
-          type:
-          - string
-          - 'null'
-          example: '123'
-        type:
-          $ref: '#/components/schemas/PhoneNumberType'
-    TermsAcceptRequest:
-      type: object
-      required:
-      - acceptedAccountsTermsAndCondition
-      - eSignatureFullName
-      properties:
-        acceptedAccountsTermsAndCondition:
-          type: boolean
-          description: Must be true to accept account terms and conditions.
-        termsAcceptedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Timestamp when terms were accepted (ISO-8601); if null, current time is used.
-        eSignatureFullName:
-          type: string
-          minLength: 1
-          maxLength: 300
-          description: E-signature (full name including middle name when present); must match investor's full name.
-    TriggerKycRequest:
+    CreateIndividualAccountRequest:
       type: object
       required:
       - transactionId
+      - investor
       properties:
         transactionId:
           type: string
           description: Mandatory string for auditing and troubleshooting; echoed back in the response.
           example: a0000000-0000-0000-0000-000000000001
-    PostKycResponse:
-      type: object
-      properties:
-        userId:
-          type: string
-        kycResult:
-          $ref: '#/components/schemas/KycResponse'
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Echoed from the request.
-    EmploymentRequest:
-      type: object
-      required:
-      - employmentStatus
-      properties:
-        employmentStatus:
-          $ref: '#/components/schemas/EmploymentStatus'
-        employerName:
-          type:
-          - string
-          - 'null'
-          maxLength: 100
-          description: Required when employmentStatus is FULL_TIME_EMPLOYED or PART_TIME_EMPLOYED.
-        occupation:
-          type:
-          - string
-          - 'null'
-          maxLength: 100
-          description: Required when employmentStatus is FULL_TIME_EMPLOYED or PART_TIME_EMPLOYED.
-    TrustedContactResponse:
-      type: object
-      properties:
-        trustedContact:
-          $ref: '#/components/schemas/TrustedContactDetails'
-          description: The created trusted contact.
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Echoed from the request.
-    InvestmentProfile:
-      type: object
-      required:
-      - investmentObjective
-      - tradeIlliquidSecurities
-      properties:
-        investmentObjective:
-          $ref: '#/components/schemas/InvestmentObjective'
-        tradeIlliquidSecurities:
+        investor:
+          $ref: '#/components/schemas/InvestorRequest'
+        optOutOfTrustedContact:
           type: boolean
-          description: Acknowledgement that user is willing to trade low volume securities.
+          description: Account owner intending to not add a trusted contact to the account.If the owner agrees to add trusted contact then the trustedContact is required while creating an account.
+        investmentProfile:
+          allOf:
+          - $ref: '#/components/schemas/InvestmentProfile'
+        trustedContact:
+          allOf:
+          - $ref: '#/components/schemas/AccountTrustedContact'
     FinancialInfoResponse:
       type: object
       properties:
@@ -1174,14 +1038,381 @@ components:
           - string
           - 'null'
           description: Echoed from request on PATCH; null on GET.
-    ErrorResponse:
+    InvestmentProfile:
       type: object
-      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      required:
+      - investmentObjective
+      - tradeIlliquidSecurities
       properties:
-        errors:
+        investmentObjective:
+          $ref: '#/components/schemas/InvestmentObjective'
+        tradeIlliquidSecurities:
+          type: boolean
+          description: Acknowledgement that user is willing to trade low volume securities.
+    InvestmentObjective:
+      type: string
+      enum:
+      - CAPITAL_APPRECIATION
+      - SPECULATION
+      - TRADING_PROFITS
+      description: Case-insensitive when deserializing.
+    PhoneNumberRequest:
+      type: object
+      properties:
+        countryCode:
+          type:
+          - string
+          - 'null'
+          example: '1'
+        countryCodeAlpha:
+          type:
+          - string
+          - 'null'
+          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
+          example: US
+        nationalNumber:
+          type:
+          - string
+          - 'null'
+          example: '2125550123'
+        ext:
+          type:
+          - string
+          - 'null'
+          example: '123'
+        type:
+          $ref: '#/components/schemas/PhoneNumberType'
+    InvestorUpdateResponse:
+      type: object
+      description: Updated investor.
+      properties:
+        investor:
+          $ref: '#/components/schemas/InvestorResponse'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Echoed from the request on PUT.
+    TrustedContactRequest:
+      type: object
+      required:
+      - transactionId
+      - email
+      - firstName
+      - lastName
+      - physicalAddress
+      properties:
+        transactionId:
+          type: string
+          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
+          example: a0000000-0000-0000-0000-000000000001
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        middleName:
+          type:
+          - string
+          - 'null'
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        physicalAddress:
+          $ref: '#/components/schemas/TrustedContactAddress'
+        phoneNumber:
+          type: string
+    PhoneNumberResponse:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          example: 4c2d3e4f-5a6b-7c8d-9e0f-222222222222
+        countryCode:
+          type:
+          - string
+          - 'null'
+        countryCodeAlpha:
+          type:
+          - string
+          - 'null'
+        nationalNumber:
+          type:
+          - string
+          - 'null'
+        ext:
+          type:
+          - string
+          - 'null'
+        type:
+          $ref: '#/components/schemas/PhoneNumberType'
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    TrustedContactAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        street2:
+          type:
+          - string
+          - 'null'
+        city:
+          type: string
+        stateOrProvince:
+          type: string
+          description: State or province.
+        postalCode:
+          type: string
+        country:
+          type: string
+    PhoneNumberType:
+      type: string
+      enum:
+      - PRIMARY
+      - ALTERNATE
+      example: PRIMARY
+    EmploymentStatus:
+      type: string
+      enum:
+      - FULL_TIME_EMPLOYED
+      - PART_TIME_EMPLOYED
+      - UNEMPLOYED
+      - RETIRED
+      - STUDENT
+      description: Case-insensitive when deserializing.
+    InvestorResponse:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        id:
+          type:
+          - string
+          - 'null'
+        email:
+          type:
+          - string
+          - 'null'
+        firstName:
+          type:
+          - string
+          - 'null'
+        middleName:
+          type:
+          - string
+          - 'null'
+        lastName:
+          type:
+          - string
+          - 'null'
+        citizenshipCountry:
+          type:
+          - string
+          - 'null'
+        dateOfBirth:
+          type:
+          - string
+          - 'null'
+        employment:
+          allOf:
+          - $ref: '#/components/schemas/EmploymentResponse'
+        physicalAddress:
+          allOf:
+          - $ref: '#/components/schemas/AddressResponse'
+        mailingAddress:
+          allOf:
+          - $ref: '#/components/schemas/AddressResponse'
+        phoneNumbers:
           type: array
           items:
-            $ref: '#/components/schemas/ErrorItem'
+            $ref: '#/components/schemas/PhoneNumberResponse'
+        governmentIdentifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/GovernmentIdentifierResponse'
+    TriggerKycRequest:
+      type: object
+      required:
+      - transactionId
+      properties:
+        transactionId:
+          type: string
+          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
+          example: a0000000-0000-0000-0000-000000000001
+    AddressRequest:
+      type: object
+      required:
+      - street
+      - city
+      - stateOrProvince
+      - postalCode
+      - country
+      properties:
+        street:
+          type: string
+          example: 1122 King Road
+        street2:
+          type:
+          - string
+          - 'null'
+          example: Apt 12
+        street3:
+          type:
+          - string
+          - 'null'
+        street4:
+          type:
+          - string
+          - 'null'
+        street5:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+          example: Unit 5B
+        city:
+          type: string
+          example: New York
+        stateOrProvince:
+          type: string
+          description: State or province (required for address).
+          example: NY
+        postalCode:
+          type: string
+          example: '10001'
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
+          example: US
+    PatchFinancialInfoRequest:
+      type: object
+      description: All fields optional except transactionId; only provided fields are updated.
+      required:
+      - transactionId
+      properties:
+        transactionId:
+          type: string
+          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
+          example: a0000000-0000-0000-0000-000000000001
+        netWorth:
+          type:
+          - number
+          - 'null'
+          format: decimal
+          minimum: 0
+          description: Net worth; when provided, updates primary user's net worth.
+        annualIncome:
+          type:
+          - number
+          - 'null'
+          format: decimal
+          minimum: 0
+          description: Annual income; when provided, updates primary user's annual income.
+    TermsAcceptRequest:
+      type: object
+      required:
+      - acceptedAccountsTermsAndCondition
+      - eSignatureFullName
+      properties:
+        acceptedAccountsTermsAndCondition:
+          type: boolean
+          description: Must be true to accept account terms and conditions.
+        termsAcceptedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Timestamp when terms were accepted (ISO-8601); if null, current time is used.
+        eSignatureFullName:
+          type: string
+          minLength: 1
+          maxLength: 300
+          description: E-signature (full name including middle name when present); must match investor's full name.
+    TrustedContactResponse:
+      type: object
+      properties:
+        trustedContact:
+          $ref: '#/components/schemas/TrustedContactDetails'
+          description: The created trusted contact.
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Echoed from the request.
+    EmploymentResponse:
+      type: object
+      properties:
+        employmentStatus:
+          $ref: '#/components/schemas/EmploymentStatus'
+        employerName:
+          type:
+          - string
+          - 'null'
+        occupation:
+          type:
+          - string
+          - 'null'
+    AccountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        createdTs:
+          type: string
+          format: date-time
+        investors:
+          type: array
+          description: Investors associated to the account.
+          items:
+            $ref: '#/components/schemas/InvestorResponse'
+        optOutOfTrustedContact:
+          type: boolean
+          description: Captured Account owner response regarding addition of Trusted contact to the account.
+        trustedContact:
+          allOf:
+          - $ref: '#/components/schemas/TrustedContactDetails'
+          description: Account's trusted contact when set; null otherwise (trusted contact is not an investor).
+          example:
+            id: 7e8f9a0b-1c2d-3e4f-5a6b-777777777777
+            email: trusted.contact@example.com
+            firstName: Jane
+            lastName: Contact
+            physicalAddress:
+              street: 456 Oak Avenue
+              city: New York
+              stateOrProvince: NY
+              postalCode: '10001'
+              country: US
+            phoneNumbers: '+12125550456'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Echoed from the request on POST/PUT; null on GET.
     ErrorItem:
       type: object
       properties:
@@ -1204,7 +1435,87 @@ components:
           description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
 
             '
-    CreateIndividualAccountRequest:
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    AddressResponse:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          example: 2f3b2c1a-4c1b-4b1b-9d1a-111111111111
+        street:
+          type:
+          - string
+          - 'null'
+        street2:
+          type:
+          - string
+          - 'null'
+        street3:
+          type:
+          - string
+          - 'null'
+        street4:
+          type:
+          - string
+          - 'null'
+        street5:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+        city:
+          type:
+          - string
+          - 'null'
+        stateOrProvince:
+          type:
+          - string
+          - 'null'
+          description: State or province.
+        postalCode:
+          type:
+          - string
+          - 'null'
+        country:
+          type:
+          - string
+          - 'null'
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+    PostKycResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        kycResult:
+          $ref: '#/components/schemas/KycResponse'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Echoed from the request.
+    UpdateInvestorRequest:
       type: object
       required:
       - transactionId
@@ -1215,16 +1526,56 @@ components:
           description: Mandatory string for auditing and troubleshooting; echoed back in the response.
           example: a0000000-0000-0000-0000-000000000001
         investor:
-          $ref: '#/components/schemas/InvestorRequest'
-        optOutOfTrustedContact:
-          type: boolean
-          description: Account owner intending to not add a trusted contact to the account.If the owner agrees to add trusted contact then the trustedContact is required while creating an account.
-        investmentProfile:
-          allOf:
-          - $ref: '#/components/schemas/InvestmentProfile'
-        trustedContact:
-          allOf:
-          - $ref: '#/components/schemas/AccountTrustedContact'
+          $ref: '#/components/schemas/InvestorUpdateRequest'
+    KycResponse:
+      type: object
+      properties:
+        status:
+          type:
+          - string
+          - 'null'
+          description: 'KYC status. Values: PENDING (submitted, awaiting review or DocV), APPROVED (verified), NOT_APPROVED (denied, non-retryable), NOT_APPROVED_RETRYABLE (denied, may retry), VENDOR_ERROR, CANNOT_PROCESS.
+
+            When PENDING and DocV is required, docUrl and qrMessage may be present for the user to complete document verification.
+
+            '
+        id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          description: KYC record ID.
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        docUrl:
+          type:
+          - string
+          - 'null'
+          description: 'Present when status is PENDING and document verification (DocV) is required and the link is valid. URL for the user to upload their ID document. Omit or null when DocV is not required or link has expired.
+
+            '
+        qrMessage:
+          type:
+          - string
+          - 'null'
+          description: 'Present when status is PENDING and DocV is required and the link is valid. Base64 or image data for a QR code that points to the same document-upload flow as docUrl. Use when showing the user a QR code instead of a link. Omit or null when DocV is not required or link has expired.
+
+            '
+        docStatus:
+          type:
+          - string
+          - 'null'
+          description: 'Document verification (DocV) status. Null when no DocV request exists. Values: USER_ACTION_REQUIRED (user must complete DocV; docUrl/qrMessage are present when valid), PROCESSING (document received, verification in progress), COMPLETED (DocV succeeded), EXPIRED (link or session expired), FAILED (verification failed).
+
+            '
     InvestorRequest:
       type: object
       required:
@@ -1288,307 +1639,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GovernmentIdentifierRequest'
-    TrustedContactRequest:
-      type: object
-      required:
-      - transactionId
-      - email
-      - firstName
-      - lastName
-      - physicalAddress
-      properties:
-        transactionId:
-          type: string
-          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
-          example: a0000000-0000-0000-0000-000000000001
-        email:
-          type: string
-          format: email
-        firstName:
-          type: string
-          minLength: 1
-          maxLength: 100
-        middleName:
-          type:
-          - string
-          - 'null'
-        lastName:
-          type: string
-          minLength: 1
-          maxLength: 100
-        physicalAddress:
-          $ref: '#/components/schemas/TrustedContactAddress'
-        phoneNumber:
-          type: string
-    KycResponse:
-      type: object
-      properties:
-        status:
-          type:
-          - string
-          - 'null'
-          description: 'KYC status. Values: PENDING (submitted, awaiting review or DocV), APPROVED (verified), NOT_APPROVED (denied, non-retryable), NOT_APPROVED_RETRYABLE (denied, may retry), VENDOR_ERROR, CANNOT_PROCESS.
-
-            When PENDING and DocV is required, docUrl and qrMessage may be present for the user to complete document verification.
-
-            '
-        id:
-          type:
-          - string
-          - 'null'
-          format: uuid
-          description: KYC record ID.
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        docUrl:
-          type:
-          - string
-          - 'null'
-          description: 'Present when status is PENDING and document verification (DocV) is required and the link is valid. URL for the user to upload their ID document. Omit or null when DocV is not required or link has expired.
-
-            '
-        qrMessage:
-          type:
-          - string
-          - 'null'
-          description: 'Present when status is PENDING and DocV is required and the link is valid. Base64 or image data for a QR code that points to the same document-upload flow as docUrl. Use when showing the user a QR code instead of a link. Omit or null when DocV is not required or link has expired.
-
-            '
-        docStatus:
-          type:
-          - string
-          - 'null'
-          description: 'Document verification (DocV) status. Null when no DocV request exists. Values: USER_ACTION_REQUIRED (user must complete DocV; docUrl/qrMessage are present when valid), PROCESSING (document received, verification in progress), COMPLETED (DocV succeeded), EXPIRED (link or session expired), FAILED (verification failed).
-
-            '
-    GovernmentIdentifierType:
-      type: string
-      enum:
-      - TIN
-      - INTERNATIONAL_TIN
-      - PASSPORT
-      - EIN
-      example: TIN
-    AccountResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        status:
-          type: string
-        createdTs:
-          type: string
-          format: date-time
-        investors:
-          type: array
-          description: Investors associated to the account.
-          items:
-            $ref: '#/components/schemas/InvestorResponse'
-        optOutOfTrustedContact:
-          type: boolean
-          description: Captured Account owner response regarding addition of Trusted contact to the account.
-        trustedContact:
-          allOf:
-          - $ref: '#/components/schemas/TrustedContactDetails'
-          description: Account's trusted contact when set; null otherwise (trusted contact is not an investor).
-          example:
-            id: 7e8f9a0b-1c2d-3e4f-5a6b-777777777777
-            email: trusted.contact@example.com
-            firstName: Jane
-            lastName: Contact
-            physicalAddress:
-              street: 456 Oak Avenue
-              city: New York
-              stateOrProvince: NY
-              postalCode: '10001'
-              country: US
-            phoneNumbers: '+12125550456'
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Echoed from the request on POST/PUT; null on GET.
-    AccountTrustedContact:
-      type: object
-      required:
-      - email
-      - firstName
-      - lastName
-      - physicalAddress
-      - phoneNumber
-      properties:
-        email:
-          type: string
-          format: email
-        firstName:
-          type: string
-          minLength: 1
-          maxLength: 100
-        middleName:
-          type:
-          - string
-          - 'null'
-        lastName:
-          type: string
-          minLength: 1
-          maxLength: 100
-        physicalAddress:
-          $ref: '#/components/schemas/TrustedContactAddress'
-        phoneNumber:
-          type: string
-    PhoneNumberType:
-      type: string
-      enum:
-      - PRIMARY
-      - ALTERNATE
-      example: PRIMARY
-    GovernmentIdentifierRequest:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/GovernmentIdentifierType'
-        country:
-          type:
-          - string
-          - 'null'
-          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
-          example: US
-        identifier:
-          type:
-          - string
-          - 'null'
-          example: '123456789'
-    UpdateInvestorRequest:
-      type: object
-      required:
-      - transactionId
-      - investor
-      properties:
-        transactionId:
-          type: string
-          description: Mandatory string for auditing and troubleshooting; echoed back in the response.
-          example: a0000000-0000-0000-0000-000000000001
-        investor:
-          $ref: '#/components/schemas/InvestorUpdateRequest'
-    EmploymentStatus:
-      type: string
-      enum:
-      - FULL_TIME_EMPLOYED
-      - PART_TIME_EMPLOYED
-      - UNEMPLOYED
-      - RETIRED
-      - STUDENT
-      description: Case-insensitive when deserializing.
-    InvestorResponse:
-      type: object
-      properties:
-        type:
-          type:
-          - string
-          - 'null'
-        id:
-          type:
-          - string
-          - 'null'
-        email:
-          type:
-          - string
-          - 'null'
-        firstName:
-          type:
-          - string
-          - 'null'
-        middleName:
-          type:
-          - string
-          - 'null'
-        lastName:
-          type:
-          - string
-          - 'null'
-        citizenshipCountry:
-          type:
-          - string
-          - 'null'
-        dateOfBirth:
-          type:
-          - string
-          - 'null'
-        employment:
-          allOf:
-          - $ref: '#/components/schemas/EmploymentResponse'
-        physicalAddress:
-          allOf:
-          - $ref: '#/components/schemas/AddressResponse'
-        mailingAddress:
-          allOf:
-          - $ref: '#/components/schemas/AddressResponse'
-        phoneNumbers:
-          type: array
-          items:
-            $ref: '#/components/schemas/PhoneNumberResponse'
-        governmentIdentifiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/GovernmentIdentifierResponse'
-    AddressRequest:
-      type: object
-      required:
-      - street
-      - city
-      - stateOrProvince
-      - postalCode
-      - country
-      properties:
-        street:
-          type: string
-          example: 1122 King Road
-        street2:
-          type:
-          - string
-          - 'null'
-          example: Apt 12
-        street3:
-          type:
-          - string
-          - 'null'
-        street4:
-          type:
-          - string
-          - 'null'
-        street5:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-          example: Unit 5B
-        city:
-          type: string
-          example: New York
-        stateOrProvince:
-          type: string
-          description: State or province (required for address).
-          example: NY
-        postalCode:
-          type: string
-          example: '10001'
-        country:
-          type: string
-          description: ISO 3166-1 alpha-2 country code (two uppercase letters).
-          example: US
     TrustedContactDetails:
       type: object
       description: Trusted contact.
@@ -1612,49 +1662,7 @@ components:
           - $ref: '#/components/schemas/TrustedContactAddress'
         phoneNumber:
           type: string
-    TrustedContactAddress:
-      type: object
-      properties:
-        street:
-          type: string
-        street2:
-          type:
-          - string
-          - 'null'
-        city:
-          type: string
-        stateOrProvince:
-          type: string
-          description: State or province.
-        postalCode:
-          type: string
-        country:
-          type: string
-    InvestorUpdateResponse:
-      type: object
-      description: Updated investor.
-      properties:
-        investor:
-          $ref: '#/components/schemas/InvestorResponse'
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Echoed from the request on PUT.
-    EmploymentResponse:
-      type: object
-      properties:
-        employmentStatus:
-          $ref: '#/components/schemas/EmploymentStatus'
-        employerName:
-          type:
-          - string
-          - 'null'
-        occupation:
-          type:
-          - string
-          - 'null'
-    PhoneNumberResponse:
+    GovernmentIdentifierResponse:
       type: object
       properties:
         id:
@@ -1662,25 +1670,17 @@ components:
           - string
           - 'null'
           format: uuid
-          example: 4c2d3e4f-5a6b-7c8d-9e0f-222222222222
-        countryCode:
-          type:
-          - string
-          - 'null'
-        countryCodeAlpha:
-          type:
-          - string
-          - 'null'
-        nationalNumber:
-          type:
-          - string
-          - 'null'
-        ext:
-          type:
-          - string
-          - 'null'
+          example: aaaaaaaa-bbbb-cccc-dddd-333333333333
         type:
-          $ref: '#/components/schemas/PhoneNumberType'
+          $ref: '#/components/schemas/GovernmentIdentifierType'
+        country:
+          type: string
+          example: US
+        identifier:
+          type:
+          - string
+          - 'null'
+          example: '123456789'
         createdTs:
           type:
           - string

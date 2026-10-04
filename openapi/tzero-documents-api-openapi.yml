@@ -313,22 +313,6 @@ paths:
     - url: https://gateway-web-api.tzero.com/app
 components:
   schemas:
-    def-1:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
     def-16:
       type: object
       properties:
@@ -399,6 +383,22 @@ components:
           type: integer
           description: Total number of pages
       title: PaginationMeta
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -276,6 +276,28 @@ paths:
           description: Bad Gateway (service unavailable or returned an error)
 components:
   schemas:
+    ErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
+        message:
+          type: string
+          description: Human-readable message.
+        field:
+          type:
+          - string
+          - 'null'
+          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
+        details:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
+
+            '
     CreateBankAccountRequest:
       type: object
       description: Request body for linking a new bank account.
@@ -323,28 +345,6 @@ components:
           - 'null'
           description: Optional free-text field for audit trail describing how the bank details were verified.
           example: Verified via Plaid
-    ErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
-        message:
-          type: string
-          description: Human-readable message.
-        field:
-          type:
-          - string
-          - 'null'
-          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
-        details:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
-
-            '
     ErrorResponse:
       type: object
       description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
@@ -353,34 +353,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorItem'
-    CreateBankTransferRequest:
-      type: object
-      description: Request body for initiating a bank transfer account.
-      required:
-      - transactionId
-      - amount
-      - transactionType
-      properties:
-        transactionId:
-          type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-        amount:
-          type: number
-          format: double
-        transactionType:
-          type: string
-          enum:
-          - DEPOSIT
-          - WITHDRAWAL
-          description: Bank transaction type associated to the request.
-        currency:
-          type:
-          - string
-          - 'null'
-          enum:
-          - USD
-          example: USD
     BankAccountDetails:
       type: object
       properties:
@@ -438,6 +410,34 @@ components:
         bankAccountId:
           type: string
           description: Bank account linked to the transaction sent in the request.
+        currency:
+          type:
+          - string
+          - 'null'
+          enum:
+          - USD
+          example: USD
+    CreateBankTransferRequest:
+      type: object
+      description: Request body for initiating a bank transfer account.
+      required:
+      - transactionId
+      - amount
+      - transactionType
+      properties:
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        amount:
+          type: number
+          format: double
+        transactionType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          description: Bank transaction type associated to the request.
         currency:
           type:
           - string

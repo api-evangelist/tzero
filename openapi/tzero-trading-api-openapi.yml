@@ -282,23 +282,28 @@ paths:
           description: Service Unavailable
 components:
   schemas:
-    FeeResponse:
+    ErrorItem:
       type: object
-      required:
-      - fee
-      - status
-      - feeFormatted
       properties:
-        fee:
-          type: number
-          format: double
-          description: The amount in USD which will be charged if the previously proposed trade is completed.
-        feeFormatted:
+        code:
           type: string
-          description: A formatted string representing the amount in USD which will be charged if the previously proposed trade is completed
-        status:
+          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
+        message:
           type: string
-          description: DEPRECATED. Text description roughly equivalent to a HTTP status code
+          description: Human-readable message.
+        field:
+          type:
+          - string
+          - 'null'
+          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
+        details:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
+
+            '
     OrderExecution:
       type: object
       required:
@@ -402,28 +407,15 @@ components:
           type: string
           enum:
           - CANCEL_REQUESTED
-    ErrorItem:
+    OrdersListResponse:
       type: object
+      required:
+      - orders
       properties:
-        code:
-          type: string
-          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
-        message:
-          type: string
-          description: Human-readable message.
-        field:
-          type:
-          - string
-          - 'null'
-          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
-        details:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
-
-            '
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderResponse'
     CreateOrderResponse:
       type: object
       properties:
@@ -485,15 +477,55 @@ components:
           - number
           - 'null'
           format: double
-    OrdersListResponse:
+    CreateOrderRequest:
       type: object
       required:
-      - orders
+      - transactionId
+      - symbol
+      - assetId
+      - side
+      - timeInForce
+      - type
+      - quantity
+      - limitPrice
       properties:
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderResponse'
+        symbol:
+          type: string
+        assetId:
+          type: string
+        side:
+          type: string
+          description: BUY or SELL
+          enum:
+          - BUY
+          - SELL
+        timeInForce:
+          type: string
+          enum:
+          - DAY
+          - GTD
+          - GTC
+          description: 'Time in Force. Accepts (DAY, GTC, GTD)
+
+            '
+        expireDate:
+          type:
+          - string
+          - 'null'
+          description: Expiration date (yyyy-MM-dd). Required only when timeInForce is GOOD_TIL_DATE; must be null for DAY/GTC.
+        type:
+          type: string
+          enum:
+          - LIMIT
+        quantity:
+          type: number
+          format: double
+        limitPrice:
+          type: number
+          format: double
+        transactionId:
+          type: string
+          description: Client-provided transaction identifier for idempotency and tracing.
     OrderResponse:
       type: object
       required:
@@ -623,55 +655,23 @@ components:
           items:
             $ref: '#/components/schemas/OrderExecution'
           description: Execution history for an order.
-    CreateOrderRequest:
+    FeeResponse:
       type: object
       required:
-      - transactionId
-      - symbol
-      - assetId
-      - side
-      - timeInForce
-      - type
-      - quantity
-      - limitPrice
+      - fee
+      - status
+      - feeFormatted
       properties:
-        symbol:
-          type: string
-        assetId:
-          type: string
-        side:
-          type: string
-          description: BUY or SELL
-          enum:
-          - BUY
-          - SELL
-        timeInForce:
-          type: string
-          enum:
-          - DAY
-          - GTD
-          - GTC
-          description: 'Time in Force. Accepts (DAY, GTC, GTD)
-
-            '
-        expireDate:
-          type:
-          - string
-          - 'null'
-          description: Expiration date (yyyy-MM-dd). Required only when timeInForce is GOOD_TIL_DATE; must be null for DAY/GTC.
-        type:
-          type: string
-          enum:
-          - LIMIT
-        quantity:
+        fee:
           type: number
           format: double
-        limitPrice:
-          type: number
-          format: double
-        transactionId:
+          description: The amount in USD which will be charged if the previously proposed trade is completed.
+        feeFormatted:
           type: string
-          description: Client-provided transaction identifier for idempotency and tracing.
+          description: A formatted string representing the amount in USD which will be charged if the previously proposed trade is completed
+        status:
+          type: string
+          description: DEPRECATED. Text description roughly equivalent to a HTTP status code
   securitySchemes:
     x-api-key:
       type: apiKey

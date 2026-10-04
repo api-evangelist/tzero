@@ -718,114 +718,6 @@ paths:
           description: Internal Server Error
 components:
   schemas:
-    InvestmentDetails:
-      type: object
-      properties:
-        investmentId:
-          type: string
-        amount:
-          type: number
-          format: double
-        numberOfShares:
-          type:
-          - number
-          - 'null'
-          format: double
-        costBasis:
-          type:
-          - number
-          - 'null'
-          format: double
-        fundedAmount:
-          type:
-          - number
-          - 'null'
-          format: double
-        status:
-          $ref: '#/components/schemas/InvestmentStatusEnum'
-        assetId:
-          type: string
-        transactionId:
-          type:
-          - string
-          - 'null'
-        paymentType:
-          allOf:
-          - $ref: '#/components/schemas/PaymentTypeEnum'
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-    CancelInvestmentRequest:
-      type: object
-      required:
-      - accountId
-      - transactionId
-      properties:
-        accountId:
-          type: string
-        transactionId:
-          type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-    ErrorResponse:
-      type: object
-      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorItem'
-    AgreementDTO:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        userId:
-          type: string
-        assetId:
-          type: string
-        signedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        documentId:
-          type: string
-          format: uuid
-        status:
-          type: string
-        expired:
-          type: boolean
-        createdTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        createdBy:
-          type: string
-        modifiedTs:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        modifiedBy:
-          type: string
-        userSignature:
-          type: string
-        subscriptionType:
-          type: string
-          enum:
-          - STANDARD_MSA
-        documentVersion:
-          type: string
     ErrorItem:
       type: object
       properties:
@@ -848,123 +740,6 @@ components:
           description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
 
             '
-    CreateInvestmentRequest:
-      type: object
-      required:
-      - accountId
-      - transactionId
-      - amount
-      properties:
-        accountId:
-          type: string
-          description: Account identifier.
-        transactionId:
-          type: string
-          description: Client-provided id for idempotency and auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-        amount:
-          type: number
-          format: double
-          description: Investment amount (positive).
-        numberOfShares:
-          type:
-          - number
-          - 'null'
-          format: double
-          description: Number of shares (positive if provided). Optional value that gets computed from `amount` when ignored.
-        regCFInvestmentTermsAccepted:
-          type:
-          - boolean
-          - 'null'
-          description: Required true for Reg CF assets; optional for others.
-    InvestmentSignatureRequest:
-      type: object
-      required:
-      - accountId
-      - transactionId
-      - userSignature
-      - version
-      properties:
-        accountId:
-          type: string
-        transactionId:
-          type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-        userSignature:
-          type: string
-          description: Full name of signer (must match account holder).
-        version:
-          type: string
-          description: MSA document version.
-    CreatePaymentRequest:
-      type: object
-      description: Request body for updating payment details on an investment. Only WIRE and ACH payment types are supported.
-      required:
-      - accountId
-      - paymentType
-      - transactionId
-      properties:
-        accountId:
-          type: string
-          description: Account identifier.
-        paymentType:
-          $ref: '#/components/schemas/PaymentTypeEnum'
-        bankAccountId:
-          type:
-          - string
-          - 'null'
-          description: Linked bank account identifier. Required when paymentType is ACH.
-        transactionId:
-          type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
-    InvestmentDTO:
-      description: Investment object returned in list; same shape as InvestmentDetails.
-      allOf:
-      - $ref: '#/components/schemas/InvestmentDetails'
-    PaymentTypeEnum:
-      type: string
-      description: Supported payment types. Only WIRE and ACH are allowed.
-      enum:
-      - WIRE
-      - ACH
-    InvestmentStatusEnum:
-      type: string
-      enum:
-      - CREATED
-      - SIGNED
-      - SUBMITTED
-      - COMPLETED
-      - CANCELLED
-      - COUNTRY_MISMATCH
-      - APPROVED
-    CodeLabelDescription:
-      type: object
-      properties:
-        code:
-          type: string
-          example: COMMON_STOCK
-        label:
-          type: string
-          example: Common Stock
-        description:
-          type:
-          - string
-          - 'null'
-          example: Common Stock.
-    SubmitInvestmentRequest:
-      type: object
-      required:
-      - accountId
-      - transactionId
-      properties:
-        accountId:
-          type: string
-        transactionId:
-          type: string
-          description: Client-provided id for auditing (required, non-blank).
-          example: a0000000-0000-0000-0000-000000000001
     Asset:
       type: object
       description: Asset details.
@@ -1029,6 +804,73 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CodeLabelDescription'
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    AssetsResponse:
+      type: object
+      required:
+      - assets
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+    PaymentTypeEnum:
+      type: string
+      description: Supported payment types. Only WIRE and ACH are allowed.
+      enum:
+      - WIRE
+      - ACH
+    InvestmentDetails:
+      type: object
+      properties:
+        investmentId:
+          type: string
+        amount:
+          type: number
+          format: double
+        numberOfShares:
+          type:
+          - number
+          - 'null'
+          format: double
+        costBasis:
+          type:
+          - number
+          - 'null'
+          format: double
+        fundedAmount:
+          type:
+          - number
+          - 'null'
+          format: double
+        status:
+          $ref: '#/components/schemas/InvestmentStatusEnum'
+        assetId:
+          type: string
+        transactionId:
+          type:
+          - string
+          - 'null'
+        paymentType:
+          allOf:
+          - $ref: '#/components/schemas/PaymentTypeEnum'
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
     UpdateInvestmentRequest:
       type: object
       description: Request body for updating an investment (amount, payment details).
@@ -1082,15 +924,173 @@ components:
           - boolean
           - 'null'
           description: Self-attested accreditation answer.
-    AssetsResponse:
+    InvestmentStatusEnum:
+      type: string
+      enum:
+      - CREATED
+      - SIGNED
+      - SUBMITTED
+      - COMPLETED
+      - CANCELLED
+      - COUNTRY_MISMATCH
+      - APPROVED
+    SubmitInvestmentRequest:
       type: object
       required:
-      - assets
+      - accountId
+      - transactionId
       properties:
-        assets:
-          type: array
-          items:
-            $ref: '#/components/schemas/Asset'
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    CreateInvestmentRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      - amount
+      properties:
+        accountId:
+          type: string
+          description: Account identifier.
+        transactionId:
+          type: string
+          description: Client-provided id for idempotency and auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        amount:
+          type: number
+          format: double
+          description: Investment amount (positive).
+        numberOfShares:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: Number of shares (positive if provided). Optional value that gets computed from `amount` when ignored.
+        regCFInvestmentTermsAccepted:
+          type:
+          - boolean
+          - 'null'
+          description: Required true for Reg CF assets; optional for others.
+    CancelInvestmentRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      properties:
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    AgreementDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+        assetId:
+          type: string
+        signedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        documentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        expired:
+          type: boolean
+        createdTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdBy:
+          type: string
+        modifiedTs:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modifiedBy:
+          type: string
+        userSignature:
+          type: string
+        subscriptionType:
+          type: string
+          enum:
+          - STANDARD_MSA
+        documentVersion:
+          type: string
+    CreatePaymentRequest:
+      type: object
+      description: Request body for updating payment details on an investment. Only WIRE and ACH payment types are supported.
+      required:
+      - accountId
+      - paymentType
+      - transactionId
+      properties:
+        accountId:
+          type: string
+          description: Account identifier.
+        paymentType:
+          $ref: '#/components/schemas/PaymentTypeEnum'
+        bankAccountId:
+          type:
+          - string
+          - 'null'
+          description: Linked bank account identifier. Required when paymentType is ACH.
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+    InvestmentDTO:
+      description: Investment object returned in list; same shape as InvestmentDetails.
+      allOf:
+      - $ref: '#/components/schemas/InvestmentDetails'
+    CodeLabelDescription:
+      type: object
+      properties:
+        code:
+          type: string
+          example: COMMON_STOCK
+        label:
+          type: string
+          example: Common Stock
+        description:
+          type:
+          - string
+          - 'null'
+          example: Common Stock.
+    InvestmentSignatureRequest:
+      type: object
+      required:
+      - accountId
+      - transactionId
+      - userSignature
+      - version
+      properties:
+        accountId:
+          type: string
+        transactionId:
+          type: string
+          description: Client-provided id for auditing (required, non-blank).
+          example: a0000000-0000-0000-0000-000000000001
+        userSignature:
+          type: string
+          description: Full name of signer (must match account holder).
+        version:
+          type: string
+          description: MSA document version.
   securitySchemes:
     x-api-key:
       type: apiKey

@@ -42,6 +42,33 @@ paths:
           description: Internal Server Error
 components:
   schemas:
+    FiatBalance:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: USD
+        totalAmount:
+          type: number
+          format: double
+          description: Cash amount representing the total buying power in the account. This includes amount that is unseasoned.
+        availableWithdrawalAmount:
+          type: number
+          format: double
+          description: Seasoned fiat cash balance available for transfer to an external linked bank accounts.
+        pendingDepositAmount:
+          type: number
+          format: double
+          description: Amount that represents a Pending Incoming Transfer from a Bank.
+        pendingWithdrawalAmount:
+          type: number
+          format: double
+          description: Amount that representing a Pending Outgoing Transfer to a Bank. Subject to approval for processing the transfer.
+    AccountBalanceResponse:
+      type: object
+      properties:
+        accountBalances:
+          $ref: '#/components/schemas/BalanceDetails'
     CostBasis:
       type: object
       required:
@@ -66,28 +93,19 @@ components:
           type: number
           format: double
           description: Average cost incurred for the asset.
-    FiatBalance:
+    BalanceDetails:
       type: object
       properties:
-        currency:
+        accountId:
           type: string
-          example: USD
-        totalAmount:
-          type: number
-          format: double
-          description: Cash amount representing the total buying power in the account. This includes amount that is unseasoned.
-        availableWithdrawalAmount:
-          type: number
-          format: double
-          description: Seasoned fiat cash balance available for transfer to an external linked bank accounts.
-        pendingDepositAmount:
-          type: number
-          format: double
-          description: Amount that represents a Pending Incoming Transfer from a Bank.
-        pendingWithdrawalAmount:
-          type: number
-          format: double
-          description: Amount that representing a Pending Outgoing Transfer to a Bank. Subject to approval for processing the transfer.
+        fiat:
+          type: array
+          items:
+            $ref: '#/components/schemas/FiatBalance'
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionBalance'
     PositionBalance:
       type: object
       properties:
@@ -104,24 +122,6 @@ components:
           description: Indicates if the asset held can ne traded by ATS.
         costBasis:
           $ref: '#/components/schemas/CostBasis'
-    BalanceDetails:
-      type: object
-      properties:
-        accountId:
-          type: string
-        fiat:
-          type: array
-          items:
-            $ref: '#/components/schemas/FiatBalance'
-        positions:
-          type: array
-          items:
-            $ref: '#/components/schemas/PositionBalance'
-    AccountBalanceResponse:
-      type: object
-      properties:
-        accountBalances:
-          $ref: '#/components/schemas/BalanceDetails'
   securitySchemes:
     x-api-key:
       type: apiKey

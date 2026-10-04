@@ -113,6 +113,22 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-1:
       type: object
       properties:
@@ -129,6 +145,20 @@ components:
               type: string
               example: Investor not found
       title: ErrorResponse
+    def-8:
+      type: object
+      properties:
+        id:
+          type: string
+        assetId:
+          type: string
+        address:
+          type: string
+        tag:
+          type:
+          - string
+          - 'null'
+      title: WhitelistedAddressAsset
     def-9:
       type: object
       description: An external address approved to receive transfers from custody.
@@ -163,36 +193,6 @@ components:
           items:
             $ref: '#/components/schemas/def-8'
       title: WhitelistedAddress
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
-    def-8:
-      type: object
-      properties:
-        id:
-          type: string
-        assetId:
-          type: string
-        address:
-          type: string
-        tag:
-          type:
-          - string
-          - 'null'
-      title: WhitelistedAddressAsset
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

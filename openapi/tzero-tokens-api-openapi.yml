@@ -122,22 +122,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-1:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
     def-0:
       type: object
       properties:
@@ -154,6 +138,60 @@ components:
           type: integer
           description: Total number of pages
       title: PaginationMeta
+    def-3:
+      type: object
+      description: An on-chain instance of a token configuration on a specific chain/network.
+      properties:
+        id:
+          type: string
+        tokenConfigId:
+          type: string
+        chain:
+          type: string
+          description: Target chain (e.g. ETHEREUM, POLYGON, BESU)
+        network:
+          type: string
+          description: MAINNET / TESTNET / DEVNET
+        contractAddress:
+          type:
+          - string
+          - 'null'
+        txHash:
+          type:
+          - string
+          - 'null'
+        status:
+          type: string
+          example: DEPLOYED
+        walletAddress:
+          type:
+          - string
+          - 'null'
+        deployedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      title: Deployment
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
     def-2:
       type: object
       description: A token configuration (the blueprint). Deployments are its on-chain instances.
@@ -222,44 +260,6 @@ components:
           items:
             $ref: '#/components/schemas/def-3'
       title: TokenConfig
-    def-3:
-      type: object
-      description: An on-chain instance of a token configuration on a specific chain/network.
-      properties:
-        id:
-          type: string
-        tokenConfigId:
-          type: string
-        chain:
-          type: string
-          description: Target chain (e.g. ETHEREUM, POLYGON, BESU)
-        network:
-          type: string
-          description: MAINNET / TESTNET / DEVNET
-        contractAddress:
-          type:
-          - string
-          - 'null'
-        txHash:
-          type:
-          - string
-          - 'null'
-        status:
-          type: string
-          example: DEPLOYED
-        walletAddress:
-          type:
-          - string
-          - 'null'
-        deployedAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        createdAt:
-          type: string
-          format: date-time
-      title: Deployment
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
