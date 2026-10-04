@@ -552,6 +552,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/tzero-capability-edges.yml
+  name: tZERO Business Capability Map
 - type: AgenticAccess
   url: agentic-access/tzero-agentic-access.yml
 - type: DomainSecurity
