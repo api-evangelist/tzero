@@ -113,38 +113,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
-    def-1:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: T0K-V1-INV-001
-            message:
-              type: string
-              example: Investor not found
-      title: ErrorResponse
     def-8:
       type: object
       properties:
@@ -193,6 +161,38 @@ components:
           items:
             $ref: '#/components/schemas/def-8'
       title: WhitelistedAddress
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
+    def-1:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: T0K-V1-INV-001
+            message:
+              type: string
+              example: Investor not found
+      title: ErrorResponse
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

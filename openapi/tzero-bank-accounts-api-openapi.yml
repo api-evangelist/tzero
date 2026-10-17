@@ -276,28 +276,6 @@ paths:
           description: Bad Gateway (service unavailable or returned an error)
 components:
   schemas:
-    ErrorItem:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
-        message:
-          type: string
-          description: Human-readable message.
-        field:
-          type:
-          - string
-          - 'null'
-          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
-        details:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
-
-            '
     CreateBankAccountRequest:
       type: object
       description: Request body for linking a new bank account.
@@ -345,41 +323,6 @@ components:
           - 'null'
           description: Optional free-text field for audit trail describing how the bank details were verified.
           example: Verified via Plaid
-    ErrorResponse:
-      type: object
-      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorItem'
-    BankAccountDetails:
-      type: object
-      properties:
-        bankAccountId:
-          type: string
-          description: Unique identifier for the linked bank account.
-        bankName:
-          type: string
-        maskedAccountNumber:
-          type:
-          - string
-          - 'null'
-          description: Last 4 digits of the account number.
-        accountType:
-          type: string
-          enum:
-          - CHECKING
-          - SAVINGS
-          description: Type of bank account. May be empty if account type is unknown.
-        status:
-          type: string
-          description: 'Bank account status: APPROVED, PENDING, DECLINED, or CANCELED.'
-        transactionId:
-          type:
-          - string
-          - 'null'
-          description: Client-provided transaction ID (only present on link response).
     CreateBankTransferResponse:
       type: object
       description: Response object for bank transfer transaction.
@@ -417,6 +360,28 @@ components:
           enum:
           - USD
           example: USD
+    ErrorItem:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error/validation code (e.g. DATE_OF_BIRTH_IN_FUTURE, JURISDICTION_COUNTRY_NOT_ALLOWED). See x-businessValidationErrorCodes for business logic codes.
+        message:
+          type: string
+          description: Human-readable message.
+        field:
+          type:
+          - string
+          - 'null'
+          description: Request field path when applicable (e.g. investor.dateOfBirth, investor.physicalAddress.country).
+        details:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: 'Optional object that will be sent for certain error `code` and documented in the endpoint''s error table.
+
+            '
     CreateBankTransferRequest:
       type: object
       description: Request body for initiating a bank transfer account.
@@ -445,6 +410,41 @@ components:
           enum:
           - USD
           example: USD
+    ErrorResponse:
+      type: object
+      description: Error response body for validation and business-rule failures. Contains a list of errors; each item has code, message, and optional field (JSON path).
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    BankAccountDetails:
+      type: object
+      properties:
+        bankAccountId:
+          type: string
+          description: Unique identifier for the linked bank account.
+        bankName:
+          type: string
+        maskedAccountNumber:
+          type:
+          - string
+          - 'null'
+          description: Last 4 digits of the account number.
+        accountType:
+          type: string
+          enum:
+          - CHECKING
+          - SAVINGS
+          description: Type of bank account. May be empty if account type is unknown.
+        status:
+          type: string
+          description: 'Bank account status: APPROVED, PENDING, DECLINED, or CANCELED.'
+        transactionId:
+          type:
+          - string
+          - 'null'
+          description: Client-provided transaction ID (only present on link response).
   securitySchemes:
     x-api-key:
       type: apiKey

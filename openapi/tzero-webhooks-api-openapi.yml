@@ -231,6 +231,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-17:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      title: WebhookSubscription
     def-0:
       type: object
       properties:
@@ -263,27 +284,6 @@ components:
               type: string
               example: Investor not found
       title: ErrorResponse
-    def-17:
-      type: object
-      properties:
-        id:
-          type: string
-        url:
-          type: string
-          format: uri
-        events:
-          type: array
-          items:
-            type: string
-        isActive:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      title: WebhookSubscription
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

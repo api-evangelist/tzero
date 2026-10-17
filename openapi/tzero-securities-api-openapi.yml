@@ -353,22 +353,6 @@ components:
           type: string
           format: date-time
       title: Security
-    def-0:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: Total number of matching records
-        page:
-          type: integer
-          description: Current page number
-        perPage:
-          type: integer
-          description: Records per page
-        totalPages:
-          type: integer
-          description: Total number of pages
-      title: PaginationMeta
     def-13:
       type: object
       properties:
@@ -402,6 +386,22 @@ components:
           format: date-time
           description: Last chain-sync timestamp
       title: SecurityHolder
+    def-0:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of matching records
+        page:
+          type: integer
+          description: Current page number
+        perPage:
+          type: integer
+          description: Records per page
+        totalPages:
+          type: integer
+          description: Total number of pages
+      title: PaginationMeta
     def-1:
       type: object
       properties:
